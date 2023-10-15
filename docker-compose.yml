@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  atm:
+    image: atm
+    build:
+      context: .
+      dockerfile: ./Dockerfile.atm
+    ports:
+      - "6064:6064"
+    environment:
+      DISPLAY: $DISPLAY
+      QT_X11_NO_MITSHM: 1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.Xauthority:/root/.Xauthority
+
+  drone:
+    image: drone
+    build:
+      context: .
+      dockerfile: ./Dockerfile.drone
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+    volumes:
+      - ./storage/:/storage
+    ports:
+      - "6066:6066"   
+
+  fps:
+    image: fps
+    build:
+      context: .
+      dockerfile: ./Dockerfile.fps
+    volumes:
+      - ./storage/:/storage
+    ports:
+      - "6065:6065"
+  

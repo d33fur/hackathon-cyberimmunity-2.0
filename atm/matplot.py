@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-#mpl.use('TkAgg')
-mpl.use('Agg')
+mpl.use('TkAgg')
+#mpl.use('Agg')
 # import PyQt5
 # mpl.use('Qt5Agg')
 import random

@@ -5,8 +5,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 COPY requirements.txt .
+RUN apt-get update && apt-get install -y \
+        x11-utils \
+        tk
+
 RUN python -m pip install -r requirements.txt
 #RUN echo "backend : Agg" > /root/.config/matplotlib/matplotlibrc
+
+
 
 COPY atm /atm
 

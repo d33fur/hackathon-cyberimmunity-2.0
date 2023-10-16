@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
-#import matplotlib as mpl
+import matplotlib as mpl
 #mpl.use('TkAgg')
-#mpl.use('Agg')
+mpl.use('Agg')
 # import PyQt5
 # mpl.use('Qt5Agg')
 import random
@@ -57,3 +57,7 @@ def show():
 
     ani = animation.FuncAnimation(fig, animate, interval=1000, save_count=100)
     plt.show()
+    writer = animation.PillowWriter(fps=15,
+                                metadata=dict(artist='Me'),
+                                bitrate=1800)
+    ani.save('scatter.gif', writer=writer)

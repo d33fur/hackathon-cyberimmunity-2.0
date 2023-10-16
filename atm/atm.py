@@ -112,8 +112,8 @@ def data_in():
         # plt.show()
         #exec(open('matplot.py').read())
         
-        #import matplot
-        #matplot.show()
+        import matplot
+        matplot.show()
         ###
 
 

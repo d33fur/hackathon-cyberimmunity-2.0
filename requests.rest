@@ -5,7 +5,7 @@ auth: very-secure-token
 
 {
     "command" : "initiate",
-    "name" : "ITEM2",
+    "name" : "ITEM1",
     "coordinate" : [2,2,2],
     "psswd": 12345
 }
@@ -18,7 +18,7 @@ auth: very-secure-token
 
 {
     "command" : "registrate",
-    "name" : "ITEM2",
+    "name" : "ITEM1",
     "psswd": 12345
 }
 
@@ -63,7 +63,7 @@ auth: very-secure-token
 
 {
     "command" : "move_to",
-    "name" : "ITEM2",
+    "name" : "ITEM1",
     "coordinate" : [15,15,4],
     "speed" : 1,
     "psswd": 12345
@@ -89,5 +89,29 @@ auth: very-secure-token
 {
     "command" : "clear_flag",
     "name" : "ITEM1",
+    "psswd": 12345
+}
+
+### for host
+
+POST http://localhost:6064/sign_up HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+    "coordinate" : [15,15,4],
+    "name" : "ITEM1",
+    "psswd": 12345
+}
+
+###
+POST http://0.0.0.0:6064/data_in HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+    "name" : "ITEM1",
+    "coordinate" : [18,18,4],
+    "speed" : 1,
     "psswd": 12345
 }

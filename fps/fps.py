@@ -19,14 +19,6 @@ port = 6065
 app = Flask(__name__)             # create an app instance
 
 class Drone:
-    # v_x = 0
-    # v_y = 0
-    # v_z = 0
-    # battery_charge = 100 
-    # token = ""
-    # drone_status = "stopped"
-    # task_status = ""
-    # task_points = []
 
     def __init__(self, coordinate, name, psswd):
         self.coordinate = coordinate

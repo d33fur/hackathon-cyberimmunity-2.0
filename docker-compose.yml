@@ -3,17 +3,18 @@ version: '3.4'
 services:
   atm:
     image: atm
+    network_mode: host
     build:
       context: .
       dockerfile: ./Dockerfile.atm
-    ports:
-      - "6064:6064"
     environment:
       DISPLAY: $DISPLAY
+      XAUTHORITY: $XAUTHORITY
       QT_X11_NO_MITSHM: 1
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ~/.Xauthority:/root/.Xauthority
+    privileged: true
 
   drone:
     image: drone

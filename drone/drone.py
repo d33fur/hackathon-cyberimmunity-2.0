@@ -44,16 +44,7 @@ class Drone:
         return self.coordinate
 
     def move_to(self, x, y, z, speed):
-        # global DELIVERY_INTERVAL_SEC
-        # dx_target = x - self.coordinate[0]
-        # dy_target = y - self.coordinate[1]
-        # direction = math.atan2(dy_target, dx_target)
-        # distance = math.sqrt(dx_target**2 + dy_target**2)
 
-        # if z != self.coordinate[2]:
-        #     threading.Thread(target=lambda: self.flight_level_change(x, y, z, speed)).start()
-        # else:
-        #     threading.Thread(target=lambda: self.motion(x, y, speed)).start()
         self.motion_status = "Active"
         global DELIVERY_INTERVAL_SEC
         dx_target = x - self.coordinate[0]
@@ -100,61 +91,6 @@ class Drone:
         if not self.status == "Blocked":
             self.emergency_stop.clear()
     
-    # def flight_level_change(self, x,y,z):
-    #     while not self.emergency_stop.is_set():
-    #         if abs(self.coordinate[2] - z) > 1:
-    #             time.sleep(1)
-    #             self.coordinate[2] += 1
-    #             self.send_position()
-    #         else:
-    #             self.emergency_stop.set()
-    #             print(f'[REACHED_ECHELONE] {self.coordinate}')
-
-    # def motion(self, x, y, speed):
-        # global DELIVERY_INTERVAL_SEC
-        # dx_target = x - self.coordinate[0]
-        # dy_target = y - self.coordinate[1]
-        # direction = math.atan2(dy_target, dx_target)
-        # while not self.emergency_stop.is_set():
-        #     if (abs(self.coordinate[0] - x) > 1) or (abs(self.coordinate[1] - y) > 1):
-        #         time.sleep(DELIVERY_INTERVAL_SEC)
-        #         self.coordinate[0] += math.cos(direction) * speed * DELIVERY_INTERVAL_SEC
-        #         self.coordinate[1] += math.sin(direction) * speed * DELIVERY_INTERVAL_SEC
-        #         self.send_position()
-        #     else:
-        #         self.emergency_stop.set()
-        #         print(f'[REACHED_POINT] {self.coordinate}')
-
-    # def move_to(self, x, y, z, speed):
-    #     v_x = speed[0]
-    #     v_y = speed[1]
-    #     v_z = speed[2]
-    #     global DELIVERY_INTERVAL_SEC
-    #     self.emergency()
-    #     self.emergency_stop.clear()
-
-    #     if self.motion_status == "Stopped":
-    #         self.motion_status = "Active"
-    #         while not self.emergency_stop.is_set() and self.motion_status == "Active":
-    #             self.v_x = v_x
-    #             self.v_y = v_y
-    #             self.v_z = v_z
-    #             time.sleep(DELIVERY_INTERVAL_SEC)
-    #             self.coordinate[0] = self.coordinate[0] + v_x
-    #             self.coordinate[1] = self.coordinate[1] + v_y
-    #             self.coordinate[2] = self.coordinate[2] + v_z
-    #             self.battery_charge-=1
-    #             if self.battery_charge <= 0:
-    #                 self.emergency()
-    #                 print(f'[ERROR] Battre low')
-    #             if (abs(self.coordinate[0] - x) < 3) and (abs(self.coordinate[1] - y) < 3) and (abs(self.coordinate[2] - z) < 3):
-    #                 self.motion_status == "Stopped"
-    #                 if self.task_points[0] == [x,y,z]:
-    #                     self.task_points.pop(0)
-    #             else:
-    #                 self.send_position()
-    #     else:
-    #         self.emergency_stop.clear()
 
     def telemetry(self):
         try:

@@ -1,15 +1,9 @@
 #!/usr/bin/env python
 
 import hashlib
-import math
-import random
-import time
-import threading
-import requests
-import json
 from random import randrange
 from flask import Flask, request, jsonify
-
+import Drone
 
 CONTENT_HEADER = {"Content-Type": "application/json"}
 ATM_ENDPOINT_URI = "http://atm:6064/data_in"
@@ -24,169 +18,6 @@ port = 6066
 app = Flask(__name__)             # create an app instance
 
 
-class Drone:
-    v_x = 0
-    v_y = 0
-    v_z = 0
-    battery_charge = 100 
-    emergency_stop = threading.Event()
-    token = ''
-    motion_status = "Stopped"
-    task_points = []
-    status = 'Active'
-
-    def __init__(self, coordinate, name, psswd):
-        self.coordinate = coordinate
-        self.name = name
-        self.psswd = psswd  
-
-    def get_coordinate(self):
-        return self.coordinate
-
-    def move_to(self, x, y, z, speed):
-
-        self.motion_status = "Active"
-        global DELIVERY_INTERVAL_SEC
-        dx_target = x - self.coordinate[0]
-        dy_target = y - self.coordinate[1]
-        dz_target = z - self.coordinate[2]
-        direction = math.atan2(dy_target, dx_target)
-        t = math.sqrt(dx_target**2 + dy_target**2)/speed
-        time_offset = t%DELIVERY_INTERVAL_SEC
-
-        while not self.emergency_stop.is_set():
-            if abs(self.coordinate[2] - z) >= 1:
-                time.sleep(1)
-                if (self.coordinate[2] - z) >= 0:
-                    self.coordinate[2] -= 1
-                else: 
-                    self.coordinate[2] += 1
-                self.send_position()
-            else:
-                # self.emergency_stop.set()
-                # print(f'[REACHED_ECHELONE] {self.coordinate}')
-                if time_offset == 0:
-                    if (abs(self.coordinate[0] - x) > 1) or (abs(self.coordinate[1] - y) > 1):
-                        time.sleep(DELIVERY_INTERVAL_SEC)
-                        self.coordinate[0] += math.cos(direction) * speed * DELIVERY_INTERVAL_SEC
-                        self.coordinate[1] += math.sin(direction) * speed * DELIVERY_INTERVAL_SEC
-                        self.send_position()
-                    else:
-                        self.emergency_stop.set()
-                        self.motion_status = "Stopped"
-                        print(f'[REACHED_POINT] {self.coordinate}')
-                else:
-                    if (abs(self.coordinate[0] - x) > 1) or (abs(self.coordinate[1] - y) > 1):
-                        time.sleep(time_offset)
-                        self.coordinate[0] += math.cos(direction) * speed * DELIVERY_INTERVAL_SEC
-                        self.coordinate[1] += math.sin(direction) * speed * DELIVERY_INTERVAL_SEC
-                        self.send_position()
-                    else:
-                        self.emergency_stop.set()
-                        self.motion_status = "Stopped"
-                        print(f'[REACHED_POINT] {self.coordinate}')
-                    time_offset=0
-
-    def clear_emergency_flag(self):
-        if not self.status == "Blocked":
-            self.emergency_stop.clear()
-    
-
-    def telemetry(self):
-        try:
-            data = {
-            "name": self.name,
-            "content": random.randint(1000,9999)
-            }
-            response = requests.post(
-                FPS_ENDPOINT_URI,
-                data=json.dumps(data),
-                headers=CONTENT_HEADER,
-            )
-            #print(f"[info] результат отправки данных: {response}")
-        except Exception as e:
-            print(f'exception raised: {e}')
-
-    def change_echelon(self, new_echelon):
-        self.emergency()
-        self.move_to(self.coordinate[0],self.coordinate[1], new_echelon, 1)
-        #self.start()
-
-    def start(self, speed):
-        self.clear_emergency_flag()
-        while not len(self.task_points) == 0: #or not self.emergency_stop.is_set():
-            # if self.motion_status == "Stopped":
-            x = self.task_points[0][0]
-            y = self.task_points[0][1]
-            z = self.task_points[0][2]
-            if not self.emergency_stop.is_set() and self.motion_status=="Stopped":
-                print(f'[DRONE_DEBUG] asked motion to {x,y,z}')
-                threading.Thread(
-                    target=lambda:  self.move_to(x,y,z,speed)).start()
-            else:
-                if abs(self.coordinate[0] - x) <= 1 and abs(self.coordinate[1] - y) <= 1 and abs(self.coordinate[2] - z) <= 1:
-                    self.task_points.pop(0)
-                    self.clear_emergency_flag()
-                time.sleep(DELIVERY_INTERVAL_SEC)
-            
-    def stop(self):
-        self.emergency()
-        
-    def sign_out(self):
-        self.emergency()
-        data = {
-            "name": self.name
-            }
-        try:
-            response = requests.post(
-                ATM_SIGN_OUT_URI,
-                data=json.dumps(data),
-                headers=CONTENT_HEADER,
-            )
-            #print(f"[info] результат отправки данных: {response}")
-        except Exception as e:
-            print(f'exception raised: {e}')
-
-    def registrate(self):
-        data = {
-            "name": self.name,
-            "coordinate": self.coordinate,
-            "status": "OK"
-            }
-        try:
-            response = requests.post(
-                ATM_SIGN_UP_URI,
-                data=json.dumps(data),
-                headers=CONTENT_HEADER,
-            )
-            #print(f"[info] результат отправки данных: {response}")
-        except Exception as e:
-            print(f'exception raised: {e}')
-
-    def send_position(self):
-        data = {
-            "name": self.name,
-            "token": self.token,
-            "coordinate": self.coordinate,
-            "coordinate_x": self.coordinate[0],
-            "coordinate_y": self.coordinate[1],
-            "coordinate_z": self.coordinate[2]
-            }
-        try:
-            response = requests.post(
-                ATM_ENDPOINT_URI,
-                data=json.dumps(data),
-                headers=CONTENT_HEADER,
-            )
-            #print(f"[info] результат отправки данных: {response}")
-        except Exception as e:
-            print(f'exception raised: {e}')
-
-    def emergency(self):
-        self.emergency_stop.set()
-        self.motion_status = "Stopped"
-        time.sleep(DELIVERY_INTERVAL_SEC)
-        self.send_position()
 
 
 @app.route("/set_command", methods=['POST'])
@@ -196,12 +27,12 @@ def set_command():
         content = request.json
         print(f'[DRONE_DEBUG] received {content}')
         if content['command'] == 'initiate':
-            tmp = Drone(content['coordinate'], content['name'], content['psswd'])
+            tmp = Drone.Drone(content['coordinate'], content['name'], content['psswd'])
             drones.append(tmp)
             print (f"Added in point {tmp.coordinate}")
         else:
             
-            drone = list(filter(lambda i: content['name'] == i.name, drones)) #was "in" istead of ""==""
+            drone = list(filter(lambda i: content['name'] == i.name, drones))
             
             if len(drone) > 1:
                 print(f'incorrect name: {content["name"]}')

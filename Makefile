@@ -12,6 +12,7 @@ build:
 	docker-compose build
 
 run:
+	xhost +local:docker
 	docker-compose up -d 
 
 restart:

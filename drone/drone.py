@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import hashlib
+import os
 from random import randrange
 from flask import Flask, request, jsonify
 import Drone
@@ -14,7 +15,7 @@ DELIVERY_INTERVAL_SEC = 1
 drones = []
 
 host_name = "0.0.0.0"
-port = 6066
+port = os.environ['DRONE_PORT']#6066
 app = Flask(__name__)             # create an app instance
 
 
@@ -27,6 +28,7 @@ def set_command():
         content = request.json
         print(f'[DRONE_DEBUG] received {content}')
         if content['command'] == 'initiate':
+            print(port)
             tmp = Drone.Drone(content['coordinate'], content['name'], content['psswd'])
             drones.append(tmp)
             print (f"Added in point {tmp.coordinate}")

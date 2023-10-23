@@ -49,12 +49,12 @@ class Drone:
     
     def position_controller(self):
         if len(self.task_points) != 0:
-            print ('DEBUG 1')
+            
             if self.task_points[0][3] == 1 and self.camera_status == 'OFF':
-                print ('DEBUG 2')
+                
                 self.telemetry_status_set('ON')
             elif self.task_points[0][3] != 1 and self.camera_status == 'ON':
-                print ('DEBUG 3')
+                
                 self.telemetry_status_set('OFF')
         #time.sleep(DELIVERY_INTERVAL_SEC)
         
@@ -196,8 +196,7 @@ class Drone:
                     self.task_points.pop(0)
                     self.clear_emergency_flag()
                 time.sleep(DELIVERY_INTERVAL_SEC)
-        print('DEBUG RTH')
-        print(f'{self.start_point} and {self.coordinate}')
+        
         if len(self.task_points) == 0: # and self.emergency_stop.is_set() and self.motion_status=="Stopped": # return to home
             time.sleep(DELIVERY_INTERVAL_SEC)
             self.clear_emergency_flag()
@@ -226,7 +225,9 @@ class Drone:
         data = {
             "name": self.name,
             "coordinate": self.coordinate,
-            "status": "OK"
+            "status": "OK",
+            "index": int(os.environ['DRONE_PORT']) - 6066,
+            "port": os.environ['DRONE_PORT']
             }
         try:
             response = requests.post(

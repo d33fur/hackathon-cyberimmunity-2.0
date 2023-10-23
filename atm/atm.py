@@ -48,9 +48,6 @@ plot_y = [0] * 5
 
 
 class Drone:
-    v_x = 0
-    v_y = 0
-    v_z = 0
     battery_charge = 100 
     #emergency_stop = threading.Event()
     token = ""
@@ -58,9 +55,11 @@ class Drone:
     task_status = ""
     task_points = []
 
-    def __init__(self, coordinate, name):
+    def __init__(self, coordinate, name, port, index):
         self.coordinate = coordinate
         self.name = name
+        self.endpoint = "http://drone" + str(index) +":" + str(port) + "/set_command"
+        self.emergency = "http://drone" + str(index) +":" + str(port) + "/emergency"
         
 #def draw_points(index, name, coordinate):
 def draw_points(i):
@@ -147,7 +146,7 @@ def data_in():
                     "token": drone.token
                 }
             requests.post(
-                    DRONE_EMERGENCY_ENDPOINT_URI,
+                    drone.emergency,
                     data=json.dumps(data),
                     headers=CONTENT_HEADER,
                 )
@@ -208,9 +207,9 @@ def sign_up():
     print(f'[ATM_DEBUG] received {content}')
     global drones
     try:
-        tmp = Drone(content['coordinate'], content['name'])
+        tmp = Drone(content['coordinate'], content['name'], content['port'], content['index'])
         drones.append(tmp)
-        print(f"[ATM_SIGN_UP] зарегестрирован дрон: {content['name']} в точке {content['coordinate']}")
+        print(f"[ATM_SIGN_UP] зарегестрирован дрон: {content['name']} в точке {content['coordinate']} at port {content['port']}")
     except Exception as _:
         error_message = f"malformed request {request.data}"
         return error_message, 500
@@ -255,12 +254,12 @@ def new_task():
                 "token": drone.token
             }
             requests.post(
-                DRONE_EMERGENCY_ENDPOINT_URI,
+                drone.emergency,
                 data=json.dumps(data),
                 headers=CONTENT_HEADER,
             )
 
-        print(f'[ATM_DEBUG] activated')
+        #print(f'[ATM_DEBUG] activated')
 
         #token = random.randint(1000,9999)
         tmp = ""
@@ -270,7 +269,7 @@ def new_task():
         token.update(tmp.encode('utf-8'))
         drone.token = token.hexdigest()
         
-        print(f'[ATM_DEBUG] token generated')
+        #print(f'[ATM_DEBUG] token generated')
 
         data = {
             "name": content['name'],
@@ -279,7 +278,7 @@ def new_task():
             "token": drone.token
         }
         requests.post(
-            DRONE_ENDPOINT_URI,
+            drone.endpoint,
             data=json.dumps(data),
             headers=CONTENT_HEADER,
         )
@@ -299,7 +298,7 @@ def new_task():
         )
         
         
-        print(f'[ATM_DEBUG] fps accepted')
+        #print(f'[ATM_DEBUG] fps accepted')
         # else:
         #     print(f'[ATM_NEW_TASK] something went wrong during creating new task for drone {content["name"]}') 
 
@@ -308,59 +307,77 @@ def new_task():
         return error_message, 400
     return jsonify({"operation": "new_task", "status": True})
 
+
+def draw2():
+    try:
+        fig = plt.figure()
+
+        ax = ['']*5
+        plot_x = ['']*5
+        plot_y = ['']*5
+        for i in range(5):
+            ax[i] = fig.add_subplot(2,3,i+1)
+            plot_x[i] = []
+            plot_y[i] = []
+        items_z = [''] *5
+        names = [''] * 5
+
+
+        def animate(i):
+            data = ''
+            with open('/storage/coordinates', 'r') as f:
+                data = f.readline()
+
+            index,name,x,y,z = data.split(',')
+            x = int(x)
+            y = int(y)
+            z = str(z)
+            index = int(index)
+            ###
+            
+            items_z[index] = z
+            # plot_x[index] = x
+            # plot_y[index] = y
+            names[index] = name
+            colors = ["red","green","black","orange","purple","yellow","blue","grey"]
+            patch = [''] * 5
+
+
+            for j in range(len(drones)):
+                ax[j].axhline(y = 0, color = 'b', linestyle = '-')
+                ax[j].axvline(x = 0, color = 'b', linestyle = '-')
+  
+            #for i in range(len(drones)):
+            for i in range(len(drones)):
+                patch[i] = mpatches.Patch(color=colors[i], label = ' ')
+            patch[index] = mpatches.Patch(color =colors[index], label = names[index] + ': ' + str(items_z[index]))
+            ax[index].legend(handles = [patch[index]], loc = "upper right")
+            ax[index].scatter(x,y, c = colors[index], s = abs(int(z)))
+            plot_x[index].append(x)
+            plot_y[index].append(y)
+
+            for j in range(len(drones)):
+                ax[j].set_title(names[j])
+                ax[j].plot(plot_x[j],plot_y[j], color = colors[j])
+
+        ani = animation.FuncAnimation(fig, animate, interval=1000, save_count=1000)
+        plt.show()
+        writer = animation.PillowWriter(fps=15,
+                                metadata=dict(artist='Me'),
+                                bitrate=1800)
+        ani.save('scatter.gif', writer=writer)
+    except Exception as e:
+        print(e)
+        print('AAA')
+
 def draw():
     global ax
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
-    print(f'[ATM_DEBUG] 9')
     names = [''] * 5
     
-    def draw_points(i):
-        # items_z = [""] * 5
-        # plot_x = [0.1]*5
-        # plot_y = [0.1]*5
-        # names = []
-
-
-        # for i in range(5):
-        #     names.append('item' + str(i))
-        
-        ###
-        # item_names = names[random.randint(0,4)]
-        # items_z[int(item_names[-1])] = z
-        # plot_x[int(item_names[-1])] = x
-        # plot_y[int(item_names[-1])] = y
-        # colors = ["red","green","black","orange","purple"]
-        # patch_0 = mpatches.Patch(color=colors[0], label='item0: ' + items_z[0])
-        # patch_1 = mpatches.Patch(color=colors[1], label='item1: ' + items_z[1])
-        # patch_2 = mpatches.Patch(color=colors[2], label='item2: ' + items_z[2])
-        # patch_3 = mpatches.Patch(color=colors[3], label='item3: ' + items_z[3])
-        # patch_4 = mpatches.Patch(color=colors[4], label='item4: ' + items_z[4])
-        # ax.clear()
-        # if plot_x[0]!=0.1 and plot_y[0]!=0.1:
-        #     ax.scatter(plot_x[0],plot_y[0], c=colors[0], s = abs(int(items_z[0]))*2)
-        # if plot_x[1]!=0.1 and plot_y[1]!=0.1:
-        #     ax.scatter(plot_x[1],plot_y[1], c=colors[1], s = abs(int(items_z[1]))*2)
-        # if plot_x[2]!=0.1 and plot_y[2]!=0.1:
-        #     ax.scatter(plot_x[2],plot_y[2], c=colors[2], s = abs(int(items_z[2]))*2)
-        # if plot_x[3]!=0.1 and plot_y[3]!=0.1:
-        #     ax.scatter(plot_x[3],plot_y[3], c=colors[3], s = abs(int(items_z[3])*2))
-        # if plot_x[4]!=0.1 and plot_y[4]!=0.1:
-        #     ax.scatter(plot_x[4],plot_y[4], c=colors[4], s = abs(int(items_z[4]))*2)
-        # ax.legend(handles=[patch_0, patch_1, patch_2, patch_3, patch_4], loc='upper right')
-        # plt.axhline(y=0, color='b', linestyle='-')
-        # plt.axvline(x=0, color='b', linestyle='-')
-        # plt.xlim(-2*max(abs(min(plot_x)), max(plot_x)), 2*max(abs(min(plot_x)), max(plot_x)))
-        # plt.ylim(-2*max(abs(min(plot_y)), max(plot_y)), 2*max(abs(min(plot_y)), max(plot_y)))
-        # plt.yscale("linear")
-        # plt.xscale("linear")
-        # plt.grid()
-
-        ###
-        
+    def draw_points(i):        
         global drones, ax, items_z, plot_x, plot_y
-
-
 
         data = ''
         with open('/storage/coordinates', 'r') as f:
@@ -406,9 +423,7 @@ def draw():
 
     #threading.Thread(target = lambda: animation.FuncAnimation(fig, draw_points, interval=1000, save_count=100)).start()
     ani = animation.FuncAnimation(fig, draw_points, interval=1000, save_count=10000)
-    print(f'[ATM_DEBUG] 10')
     plt.show()
-    print(f'[ATM_DEBUG] 11')
     writer = animation.PillowWriter(fps=15,
                             metadata=dict(artist='Me'),
                             bitrate=1800)
@@ -418,5 +433,7 @@ def draw():
 if __name__ == "__main__":
     threading.Thread(
                     target=lambda:  draw()).start()
+    threading.Thread(
+                    target=lambda:  draw2()).start()
     
     app.run(port=port, host=host_name)

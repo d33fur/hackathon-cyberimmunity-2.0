@@ -15,7 +15,7 @@ DELIVERY_INTERVAL_SEC = 1
 drones = []
 
 host_name = "0.0.0.0"
-port = os.environ['DRONE_PORT']#6066
+port = os.environ['DRONE_PORT'] #6066
 app = Flask(__name__)             # create an app instance
 
 
@@ -26,7 +26,7 @@ def set_command():
     global drones
     try:
         content = request.json
-        print(f'[DRONE_DEBUG] received {content}')
+        # print(f'[DRONE_DEBUG] received {content}')
         if content['command'] == 'initiate':
             print(port)
             tmp = Drone.Drone(content['coordinate'], content['name'], content['psswd'])
@@ -37,16 +37,21 @@ def set_command():
             drone = list(filter(lambda i: content['name'] == i.name, drones))
             
             if len(drone) > 1:
-                print(f'incorrect name: {content["name"]}')
-                return "BAD NAME", 404
+                print(f'[DRONE_SET_COMMAND_ERROR]')
+                print(f'Nonunique name: {content["name"]}')
+                return "BAD ITEM NAME", 400
+            
             drone = drone[0] 
-            if content['command'] == 'task_status_change':
+            if content['command'] == 'set_token':
                     drone.token = content['token']
-                    drone.task_status = content['task_status']
-                    print(f'[DRONE_DEBUG] token added: {drone.token}')
+                    print(f'[DRONE_TOKEN_SET]')
+            elif content['command'] == 'task_status_change':
+                    if drone.token == content['token']:
+                        drone.task_status = content['task_status']
+                        drone.hash = content['hash']
+                        print(f'[DRONE_TASK_ACCEPTED]')
             elif drone.psswd == content['psswd']:
                 if content['command'] == 'start':
-                    print(f'[DRONE_DEBUG] points: {drone.task_points}')
                     drone.start(content["speed"])
                 if content['command'] == 'stop':
                     drone.stop()
@@ -62,13 +67,12 @@ def set_command():
                     tmp = ""
                     for i in content["points"]:
                         tmp.join(str(i))
-                    tmp_token = hashlib.md5()
-                    tmp_token.update(tmp.encode('utf-8'))
-                    tmp_token = tmp_token.hexdigest()
-                    print(f'[DRONE_DEBUG] token: {drone.token}')
-                    print(f'[DRONE_DEBUG] new token: {tmp_token}')
-                    if drone.token == tmp_token:
-                        print(f'[DRONE_DEBUG] points added')
+                    tmp_hash = hashlib.md5()
+                    tmp_hash.update(tmp.encode('utf-8'))
+                    tmp_hash = tmp_hash.hexdigest()
+                    if drone.hash == tmp_hash:
+                        print(f'[DRONE_SET_TASK]')
+                        print(f'Point added!')
                         drone.task_points = content["points"]
                 if content['command'] == 'registrate':
                     drone.registrate()
@@ -83,15 +87,17 @@ def emergency():
     global drones
     try:
         content = request.json
-        drone = list(filter(lambda i: content['name'] == i.name, drones)) #was "in" istead of ""==""
+        drone = list(filter(lambda i: content['name'] == i.name, drones))
         if len(drone) > 1:
-            print(f'incorrect name: {content["name"]}')
-            return "BAD NAME", 404
+            print(f'[DRONE_EMERGENCY_ERROR]')
+            print(f'Nonunique name: {content["name"]}')
+            return "BAD ITEM NAME", 400
         else:
             if content['token'] == drone[0].token:
                 drone[0].status = "Blocked"
                 drone[0].emergency() 
-                print(f"[ATTENTION] Дрон экстренно остановлен: {content['name']}")
+                print(f"[ATTENTION]")
+                print(f"{content['name']} emergency stopped!")
 
     except Exception as e:
         print(f'exception raised: {e}')

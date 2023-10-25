@@ -15,12 +15,6 @@ DELIVERY_INTERVAL_SEC = 1
 
 
 class Drone:
-    # battery_charge = 100 
-    #emergency_stop = threading.Event()
-    #token = ''
-    # motion_status = "Stopped"
-    # task_points = []
-    # status = 'Active'
 
     def __init__(self, coordinate, name, psswd):
         self.start_point = coordinate[:]
@@ -35,6 +29,7 @@ class Drone:
         self.camera_event = threading.Event()
         self.battery_charge = 100
         self.status = 'Active'
+        self.hash = ''
 
         # threading.Thread(
         #             target=lambda:  self.self_diagnostic()).start()
@@ -49,18 +44,32 @@ class Drone:
     
     def position_controller(self):
         if len(self.task_points) != 0:
-            
             if self.task_points[0][3] == 1 and self.camera_status == 'OFF':
-                
                 self.telemetry_status_set('ON')
             elif self.task_points[0][3] != 1 and self.camera_status == 'ON':
-                
                 self.telemetry_status_set('OFF')
-        #time.sleep(DELIVERY_INTERVAL_SEC)
+        if (abs(self.coordinate[0] - self.start_point[0]) < 1) and (abs(self.coordinate[1] - self.start_point[1]) < 1) and len(self.task_points) == 0:
+            self.end_task()
+        
+    def end_task(self):
+        try:
+            self.camera_event.set()
+            data = {
+            "name": self.name,
+            "operation": "log",
+            "msg": "Task finished"
+            }
+            response = requests.post(
+                FPS_ENDPOINT_URI,
+                data=json.dumps(data),
+                headers=CONTENT_HEADER,
+            )
+        except Exception as e:
+            print(f'exception raised: {e}')
+
         
 
     def move_to(self, x, y, z, speed):
-        #toadd check area
         self.motion_status = "Active"
         global DELIVERY_INTERVAL_SEC
         dx_target = x - self.coordinate[0]
@@ -79,8 +88,6 @@ class Drone:
                     self.coordinate[2] += 1
                 self.send_position()
             else:
-                # self.emergency_stop.set()
-                # print(f'[REACHED_ECHELONE] {self.coordinate}')
                 if time_offset == 0:
                     if (abs(self.coordinate[0] - x) > 1) or (abs(self.coordinate[1] - y) > 1):
                         time.sleep(DELIVERY_INTERVAL_SEC)
@@ -112,16 +119,16 @@ class Drone:
             self.emergency_stop.clear()
 
     def self_diagnostic(self):
-        #time.sleep(DELIVERY_INTERVAL_SEC)
         if self.battery_charge < 20:
+            print(f'[BATTRE_LOW]')
             print (self.battery_charge)
-            print(f'[BATTRE LOW]')
+            
     
     def telemetry_status_set(self, status):
         if status == 'OFF':
             self.camera_status = 'OFF'
             self.camera_event.set()
-            print(f'[CAMERA OFF]')
+            print(f'[DRONE_CAMERA_OFF]')
         elif status == 'ON': 
             self.camera_status = 'ON'
             self.camera_event.clear()
@@ -130,10 +137,8 @@ class Drone:
             
 
     def telemetry(self):
-        #todo search pixel in image, image is static
-        #camera works ony in search area
-        #as example - points of way to area and way after area
-        print(f'[CAMERA ON]')
+
+        print(f'[DRONE_CAMERA_ON]')
         while not self.camera_event.is_set():
             time.sleep(DELIVERY_INTERVAL_SEC)
             
@@ -164,6 +169,7 @@ class Drone:
             try:
                 data = {
                 "name": self.name,
+                "operation": "data",
                 "percent": percent
                 }
                 response = requests.post(
@@ -182,13 +188,13 @@ class Drone:
 
     def start(self, speed):
         self.clear_emergency_flag()
-        while not len(self.task_points) == 0: #or not self.emergency_stop.is_set():
-            # if self.motion_status == "Stopped":
+        self.camera_event.clear()
+        while not len(self.task_points) == 0:
             x = self.task_points[0][0]
             y = self.task_points[0][1]
             z = self.task_points[0][2]
             if not self.emergency_stop.is_set() and self.motion_status=="Stopped":
-                print(f'[DRONE_DEBUG] asked motion to {x,y,z}')
+                # print(f'[DRONE_DEBUG] asked motion to {x,y,z}')
                 threading.Thread(
                     target=lambda:  self.move_to(x,y,z,speed)).start()
             else:
@@ -197,7 +203,7 @@ class Drone:
                     self.clear_emergency_flag()
                 time.sleep(DELIVERY_INTERVAL_SEC)
         
-        if len(self.task_points) == 0: # and self.emergency_stop.is_set() and self.motion_status=="Stopped": # return to home
+        if len(self.task_points) == 0: # return to home
             time.sleep(DELIVERY_INTERVAL_SEC)
             self.clear_emergency_flag()
             threading.Thread(
@@ -217,7 +223,6 @@ class Drone:
                 data=json.dumps(data),
                 headers=CONTENT_HEADER,
             )
-            #print(f"[info] результат отправки данных: {response}")
         except Exception as e:
             print(f'exception raised: {e}')
 
@@ -235,7 +240,6 @@ class Drone:
                 data=json.dumps(data),
                 headers=CONTENT_HEADER,
             )
-            #print(f"[info] результат отправки данных: {response}")
         except Exception as e:
             print(f'exception raised: {e}')
 
@@ -254,7 +258,6 @@ class Drone:
                 data=json.dumps(data),
                 headers=CONTENT_HEADER,
             )
-            #print(f"[info] результат отправки данных: {response}")
         except Exception as e:
             print(f'exception raised: {e}')
 

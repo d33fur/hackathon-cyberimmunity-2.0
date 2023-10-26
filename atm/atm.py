@@ -234,6 +234,15 @@ def new_task():
         return error_message, 400
     return jsonify({"operation": "new_task", "status": True})
 
+@app.route("/show_plot", methods=['POST'])
+def show_plot():
+    # use some pipes, eg. mkfifo docker_executor_host?
+    # import subprocess
+    # subprocess.run(["bash draw.bash"])
+    # threading.Thread(
+    #                 target=lambda:  draw()).start()
+    threading.Thread(
+                    target=lambda:  draw2()).start()
 
 def draw2():
     fig = plt.figure()
@@ -355,8 +364,8 @@ def draw():
 if __name__ == "__main__":
     # threading.Thread(
     #                 target=lambda:  draw()).start()
-    threading.Thread(
-                    target=lambda:  draw2()).start()
+    # threading.Thread(
+    #                 target=lambda:  draw2()).start()
    
     
     app.run(port=port, host=host_name)

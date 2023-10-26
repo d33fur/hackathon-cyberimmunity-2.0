@@ -1,3 +1,11 @@
+### Запустить отображение графика диспетчерской
+POST http://0.0.0.0:6064/show_plot HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+}
+
 ### Добавить новый дрон в систему (доступно создание 3 дронов) управления полетами. Координата - стартовая позиция машины.
 POST http://0.0.0.0:6065/set_command HTTP/1.1
 content-type: application/json

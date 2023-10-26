@@ -57,6 +57,7 @@ def set_command():
                     drone.stop()
                 if content['command'] == 'sign_out':
                     drone.sign_out()
+                    drones.remove(drone)
                 if content['command'] == 'clear_flag':
                     drone.clear_emergency_flag()
                 if content['command'] == 'set_task':

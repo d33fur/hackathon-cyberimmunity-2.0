@@ -97,6 +97,7 @@ def set_command():
                 print(f'Requested stop for {content["name"]} successfully')
             if content['command'] == 'sign_out':
                 drone.status = 'Initiated'
+                #drones.remove(drone)
                 data = {
                 "name": content['name'],
                 "command": content['command'],

@@ -59,18 +59,8 @@ def set_command():
                     drone.sign_out()
                 if content['command'] == 'clear_flag':
                     drone.clear_emergency_flag()
-                if content['command'] == 'move_to':
-                    drone.stop() 
-                    drone.clear_emergency_flag()
-                    drone.move_to(content['coordinate'][0], content['coordinate'][1], content['coordinate'][2], content["speed"])
                 if content['command'] == 'set_task':
-                    tmp = ""
-                    for i in content["points"]:
-                        tmp.join(str(i))
-                    tmp_hash = hashlib.md5()
-                    tmp_hash.update(tmp.encode('utf-8'))
-                    tmp_hash = tmp_hash.hexdigest()
-                    if drone.hash == tmp_hash:
+                    if drone.hash == len(content["points"]):
                         print(f'[DRONE_SET_TASK]')
                         print(f'Point added!')
                         drone.task_points = content["points"]

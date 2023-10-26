@@ -8,6 +8,7 @@ from PIL import Image
 
 CONTENT_HEADER = {"Content-Type": "application/json"}
 ATM_ENDPOINT_URI = "http://atm:6064/data_in"
+ATM_WATCHDOG_URI = "http://atm:6064/watchdog"
 ATM_SIGN_UP_URI = "http://atm:6064/sign_up"
 ATM_SIGN_OUT_URI = "http://atm:6064/sign_out"
 FPS_ENDPOINT_URI = "http://fps:6065/data_in"
@@ -30,6 +31,7 @@ class Drone:
         self.battery_charge = 100
         self.status = 'Active'
         self.hash = ''
+        self.watchdog_time = time.time()
 
         # threading.Thread(
         #             target=lambda:  self.self_diagnostic()).start()
@@ -112,6 +114,7 @@ class Drone:
             self.battery_charge -= 1
             self.self_diagnostic()
             self.position_controller()
+            self.watchdog()
 
 
     def clear_emergency_flag(self):
@@ -123,7 +126,26 @@ class Drone:
             print(f'[BATTRE_LOW]')
             print (self.battery_charge)
             
-    
+    def watchdog(self):
+        if (time.time() - self.watchdog_time) > 2:
+            try:
+                data = {}
+                response = requests.post(
+                    ATM_WATCHDOG_URI,
+                    data=json.dumps(data),
+                    headers=CONTENT_HEADER,
+                )
+                #content = response.content.decode.json
+                content = response.json()
+                print(content)
+                #print(response.content.decode())
+                print(content['time'])
+                self.watchdog_time = content['time']
+            except Exception as e:
+                print(e)
+        if (time.time() - self.watchdog_time) > 10:
+            self.emergency()
+        
     def telemetry_status_set(self, status):
         if status == 'OFF':
             self.camera_status = 'OFF'

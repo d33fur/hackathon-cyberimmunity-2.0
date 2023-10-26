@@ -109,21 +109,6 @@ def set_command():
                 )
                 print(f'[FPS_SIGN_OUT]')
                 print(f'Requested sign_out for {content["name"]}')
-            if content['command'] == 'move_to':
-                data = {
-                "name": content['name'],
-                "command": content['command'],
-                "coordinate": content['coordinate'],
-                "psswd": content['psswd'],
-                "speed": content['speed']
-                }
-                requests.post(
-                    drone.endpoint,
-                    data=json.dumps(data),
-                    headers=CONTENT_HEADER,
-                )
-                print(f'[FPS_MOVE_TO]')
-                print(f'Requested motion for {content["name"]}')
             if content['command'] == 'new_task':
                 data = {
                 "name": content['name'],

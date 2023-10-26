@@ -26,25 +26,12 @@ app = Flask(__name__)  # create an app instance
 
 CONTENT_HEADER = {"Content-Type": "application/json"}
 FPS_ENDPOINT_URI = "http://fps:6065/atm_input"
-# DRONE_ENDPOINT_URI = "http://drone:6066/set_command"
-# DRONE_EMERGENCY_ENDPOINT_URI = "http://drone:6066/emergency"
 drones = []
 area = []
 
-###
-# ax = ''
-# items_z = [0] * 5
-# plot_x= [0] * 5 
-# plot_y = [0] * 5 
-###
-
 
 class Drone:
-    # battery_charge = 100 
-    # token = ""
-    # drone_status = "Stopped"
-    # task_status = ""
-    # task_points = []
+
 
     def __init__(self, coordinate, name, port, index):
         self.coordinate = coordinate
@@ -57,11 +44,22 @@ class Drone:
         
 
 def testing_retranslate(content):
-    requests.post(
-            "http://172.17.0.1:6062/",
-            data=json.dumps(content),
-            headers=CONTENT_HEADER,
-    )
+    try:
+        requests.post(
+                "http://172.17.0.1:6062/",
+                data=json.dumps(content),
+                headers=CONTENT_HEADER,
+        )
+    except Exception as _:
+        pass
+
+
+
+@app.route("/watchdog", methods=['POST'])
+def watchdog():
+    content = request.json
+    return jsonify({"time": time.time()})
+
 
 
 #получение данных на вход
@@ -135,8 +133,6 @@ def sign_up():
         
         
         drone.token = random.randint(1000,9999)
-        
-        #print(f'[ATM_DEBUG] token generated')
 
         #todo
         data = {
@@ -206,19 +202,12 @@ def new_task():
                 headers=CONTENT_HEADER,
             )
         
-
-        tmp = ""
-        for i in content["points"]:
-            tmp.join(str(i))
-        hash = hashlib.md5()
-        hash.update(tmp.encode('utf-8'))
-        hash = hash.hexdigest()
         data = {
             "name": content['name'],
             "command": "task_status_change",
             "task_status": "Accepted",
             "token": drone.token,
-            "hash": hash
+            "hash": len(content['points'])
         }
         requests.post(
             drone.endpoint,
@@ -335,8 +324,6 @@ def draw():
         
         colors = ["red","green","black","orange","purple","yellow","blue","grey"]
         patch = [''] * len(drones)
-        # for i in range(len(drones), 5):
-        #     patch[i] = mpatches.Patch(color=colors[i], label = ' ')
     
         for i in range(len(drones)):
             patch[i] = mpatches.Patch(color=colors[i], label = names[i] + ': ' + str(items_z[i]))

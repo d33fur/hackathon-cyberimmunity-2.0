@@ -1,6 +1,10 @@
-# Условия использования 
+# Общая информация
 
-Этот проект представляет собой заготовку, MVP, для задачи "Дрон-наблюдатель" и предназначен для получения представления об интерфейсе взаимодействия компонентов, возможных способах реализации их минимального функционала, его объеме и т.д. Таким образом, пример является отправной точкой работы, но не обязательно является образцом "хорошо" или "правильно" и может быть изменен и расширен участниками в своих реализациях.
+Этот проект представляет собой заготовку для задачи "Дрон-инспектор" и предназначен для получения представления об интерфейсе взаимодействия компонентов, возможных способах реализации их минимального функционала, его объеме и т.д.
+
+# Оговорка разработчика и условия использования
+
+Пример является отправной точкой работы, но не обязательно является образцом "хорошо" или "правильно" и может быть изменен и расширен участниками в своих реализациях.
 
 Применять только в учебных целях. Данный код может содержать ошибки, авторы не несут никакой ответственности за любые последствия использования этого кода.
 Условия использования и распространения - MIT лицензия (см. файл LICENSE).
@@ -34,26 +38,45 @@
 
 Для запуска примера рекомендуется использовать следующую комбинацию команд в терминалах 1 и 2:
 
-0.0 make prepare (один раз для проекта, перед первым запуском и выбором интерпретатора)
+0.0 (пере)настройка окружения (один раз для проекта, перед первым запуском и выбором интерпретатора)
 
-1.1 docker-compose build --force-rm
+``` make prepare ```
 
-1.2 make run (В контейнерах будут развернуты серверы, готовые к приему команд и начнут генерироваться и поступать необходимые эмулируемые сигналы)
+1.1 (пере)сборка docker-образов
 
-2.1 docker-compose logs -f --tail 100 (в консоли будет показан лог работы контейнеров)
+``` docker-compose build --force-rm ```
+или
+``` make rebuild ```
 
-1.3 make test (Будет запущен тестовый сценарий проверки работы основного функционала системы)
+1.2 запуск примера: в контейнерах будут развернуты серверы, готовые к приему команд и начнут генерироваться и поступать необходимые сигналы
+
+``` make run ```
+
+1.3 просмотр логов: в консоли будет показан лог работы контейнеров
+
+```docker-compose logs -f --tail 100```
+или
+```make logs```
+
+1.4 тестирование (будет запущен тестовый сценарий проверки работы основного функционала системы)
+
+``` make test ```
 
 __Можно пользоваться запросами из файла request.rest__
 
-1.4 docker stop $(docker ps -q) (завершение работы)
+1.5 завершение работы:
+
+``` docker stop $(docker ps -q) ```
+или
+``` make stop```
 
 
 ### Описание системы
 
-Система архитектруно выглядит следующим образом:
+Система архитектурно выглядит следующим образом:
 
-![Система](./docs/images/drone-observer_general.png)
+FIXME ! файл отсутствует!
+![Система](docs/images/drone-inspector_general.png)
 
 
 
@@ -61,20 +84,14 @@ __Можно пользоваться запросами из файла request
 
 | Название | Назначение | Комментарий |
 |----|----|----|
-|*atm (Air Traffic Manager, Система организации воздушного движения)* | Эмулятор системы диспетчеризации дронов на предприятии. Получает информацию о местополежнии каждого дрона, визуализирует информацию, подтверждает полетное задание. | Для визуализации используется вспомогательный файл *coordinates* в *storage* и библиотека matplotlib с некоторыми специализированными параметрами для доступа к дисплею изнутри контейнера. При возникновении ошибок с этим функционалом достаточно просто отключить вызов метода *show\show2* в *atm\atm.py\main* |
-|*fps (Flight Planning System, Система планирования полетов)* | Эмулятор сервиса управления дронами оператором. Позволяет согласовывать полетное задание с диспетчерской, включать новых дронов, управлять ими в ручном или автоматическом режиме. Получает данные телеметрии от дрона. | - |
-|*drone (Drone, Дрон)* | Непосредственно дрон-наблюдатель, получает команды от операторов (fps), выполняет их, обрабатывает и передает данные от встроенных датчиков (камера) на пульт управления, а также информацию о местоположении в диспетчерскую. | - |
+|*ATM (Air Traffic Manager, Система организации воздушного движения)* | Имитатор центральной (возможно, государственной) системы управления движением дронов в общем воздушном пространстве. Получает информацию о местоположении каждого дрона, подтверждает полетное задание. | при желании можно настроить визуализации положения дронов, но в рамках хакатона это побочный функционал, на который не стоит тратить время |
+|*FPS (Flight Planning System, Система планирования полетов)* | Имитатор сервиса распределения задач по дронам. Позволяет согласовывать полетное задание с системой ATM, отправлять  дронов на задание, задавать режимы полёта. Получает данные телеметрии от дрона. | - |
+|*drone (Drone, Дрон)* | имитатор дрона-инспектора, получает команды от операторов через FPS, выполняет их, обрабатывает и передает данные от встроенных датчиков на пульт управления, а также информацию о местоположении в АТМ. | - |
+
+![Контекст](docs/images/drone-inspector_context.png)
 
 Диаграмма последовательности этого примера выглядит следующим образом:
 
-![Диаграмма последовательности](./docs/images/drone-observer_sd.png)
+![Диаграмма последовательности](./docs/images/drone-inspector_sd.png)
 
-//www.plantuml.com/plantuml/png/SYWkIImgAStDuKfCBialKe00_uBKeaGGDx5O8P-h0AWYCpcp836lHC4j81Wac5PGZ2Bi6E8B4auioUL24NS9ylTp1Sca5ENdfN9nvUJd0oghbjmcWYYuzobwQSlC1H1278Hbl4C6YGlu8_DXf80Y95248EG47MS63t4ykKAz6r55pxHdt8Wu6oFcLTTxhwgwyyfX1szluR55xMm6ZolKjh1yGDhnUF3IPK_LuR73Ls8hUuDAQFvkuFK_-nX0x3SU4tQEDG65k6pXKA36dIrjRWkUkRNSLWvtg4bHybEDjJgH88mb2fpX1bixvLobUg9qtJak-FKQbHZL9CpWi7Os3rzPlqNPett0iR_uxi6Vy2pKABGvANQempQSqZltV3fiLdoFKiLHf90c3-XCTBVl9MblHAb2bccVB0lS_7SoFMaj_8Irb2I7rrYIpUOyMk5tH-eeeIJ6Z_Qp9gR0SXC5lFIEscd-Oz24zGsyO6bZCvvu5pGvEE66jb9nfAFHsVJOVlF8V_yqgO5O4ps3x0fzuQCQMIO4kRpDRD5hTL0QJ5wydgJiSPf_DBOFibQD7pcPedkZAwTnwuYFCdyJHbOshjNuXV9Wg-ZW9KlRa1pb2ihKa3cSjIssYWBFLgDkWC8QJ9_bOModgomDQ-miR_eyoU9GJ9S4K9f4oovD_gLtpQ9a7JjSQM2bZjZci_h6ZaINOI-jBs0gs36z6ZfQikHw8G6srEBmH6oZOhsyd-j-Y4P1wRcS5YLJEjltP904yfc5Qk-PqxgEq3rxsOfHn4Vach8lnUpaF5SYTJ1mez_m2ChT8_hfIMdpgZ59V1ffRNbSyow7JtFtfNlPGew2gxjmPsFCfYTz2yuiJzvr54eBTgadHDkAfIBai_jKMfvSdV_3mqXj6fznClwH_GC0
-
-
-
-
-
-
-
-
+[ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/bLLTQnDH47tVNt7fKqlSFo0Y5TGthQYFlgpj2eKq6vBjUvfGFmnKAO9IH6j_mUt7cZH9DtzXvXzv3dTpkziLJGlRqfcvvyoSENjtlPj6dNHtfna4wNRQZCsA7EfGvfBBLAuampEMpE1FBcTuBetCPAnxkeVusCY5zX1bTXOYSeNu7AScsfSSAOHNWcWpJJh6_Moquqx4VwEkIO8skBStjzjHApMFdxrWy4sxMma_UFc4uIZTgOGVFjzu-eY9hKxIYeCWsasJrkxEwxWJ1CqaQRDZg-_4OepSe1Chf-YehyC038r6a9ZmFidk6ld68VMjZ5cDtoEn_4y_kI9GDneeEu80bWCZtSVa66wk0qZHnvcP3dNV5Bfb244kCW70jKW8EPI9JFK0VIs4BVTnZEWvU8584jU3aJEZUowA_4oo2kmjZh4-BX_y9HQ979DmydDkiPXc8jQOLwtLOiGFaZ6vvY6eoIsOKLtcFG7iX91CX27d2KE7ZRznQsknmizoHYM1OTaMPGFo10rUbgJs4b9Y-Ra8isCwTyIbuQ7UNZiGBrEDike2Zv4QQGydtZjDRfmmgxhFv1gF-itMZrrFxl7_tqrzWN1a1bYko_6AzMg48Ik0PRMd_GhLZLGGDxjn7TrtynTY_SZLalYEuLButl2LOxkvh_SoVsSDL-csXkStpbUdyXiyGMhgd4DV2Jsr2X_s5XHJMe7NprhPG6uC0yiCNTk6hp8qvFsamuBdNkYRWhie0Dr4MB0K_hV5RKTP6qPEsJ1TXzeYJ5xFYEhCpSNnMLWJR2ck0Wuh6M0yvm0TS72ng9XwnIf-FtBl1r8mIjLGzIHaglVsezP8hUGB4kFhdHcEQsHIGiyMObpuI-GSiW-8RBXvZ0Hejy0HVxjBaDjTWezNoiAlR1F01nvM1ykHbp5itNTVAoyoEAgVmTpRhBLLNG4-cBLxtNyOQpj1jUxprdN-B5-LEgo_ElykToqvDwwZCNp8_m00)

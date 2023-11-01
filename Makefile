@@ -39,7 +39,10 @@ logs:
 test:
 	pipenv run pytest -sv
 
+stop:
+	docker-compose stop
 
 clean:
 	@pipenv --rm || echo no environment to remove
-	rm -rf Pipfile*
+	@rm -rf Pipfile* || no pipfiles to remove
+	@docker-compose down || echo no containers to remove	

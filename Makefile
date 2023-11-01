@@ -11,6 +11,9 @@ prepare: clean sys-packages pipenv build
 build:
 	docker-compose build
 
+rebuild:
+	docker-compose build --force-rm
+
 run:
 	docker-compose up -d
 
@@ -30,10 +33,13 @@ run-fps:
 run-drone:
 	pipenv run python drone/drone.py
 
+logs:
+	docker-compose logs -f --tail 100
+
 test:
 	pipenv run pytest -sv
 
 
 clean:
-	pipenv --rm
+	@pipenv --rm || echo no environment to remove
 	rm -rf Pipfile*

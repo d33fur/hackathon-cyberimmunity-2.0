@@ -1,6 +1,5 @@
 from multiprocessing import Process, Queue
 import random
-import threading
 from time import sleep
 from flask import Flask, jsonify, request
 import json
@@ -52,9 +51,9 @@ def initiate(name, coordinate, psswd):
     )
     assert response.status_code == 200
 
-def registrate(name, psswd):
+def register(name, psswd):
     data = {
-        "command" : "registrate",
+        "command" : "register",
         "name" : name, #"ITEM1",
         "psswd": psswd #12345
     }
@@ -172,7 +171,7 @@ def test_single_full_functionality():
 
     initiate("ITEM1", [2,2,2], 12345)
     sleep(2)
-    registrate("ITEM1", 12345)
+    register("ITEM1", 12345)
     sleep(2)
     set_area([-1,-1,100,100])
     sleep(1)
@@ -213,12 +212,6 @@ def test_single_full_functionality():
             z_reached = True
     assert (x_reached & y_reached & z_reached) == True
     assert ((abs(events_log[len(events_log)-1]['coordinate_x'] - 2) <= 1) & (abs(events_log[len(events_log)-1]['coordinate_y'] - 2) <= 1)) == True
-
-def test_multithreading():
-    pass
-
-def test_bad_password():
-    pass
 
 
 

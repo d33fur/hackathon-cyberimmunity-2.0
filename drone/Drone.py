@@ -248,7 +248,7 @@ class Drone:
         except Exception as e:
             print(f'exception raised: {e}')
 
-    def registrate(self):
+    def register(self):
         data = {
             "name": self.name,
             "coordinate": self.coordinate,

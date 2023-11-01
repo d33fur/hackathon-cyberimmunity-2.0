@@ -24,7 +24,7 @@ content-type: application/json
 auth: very-secure-token
 
 {
-    "command" : "registrate",
+    "command" : "register",
     "name" : "ITEM1",
     "psswd": 12345
 }

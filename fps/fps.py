@@ -122,10 +122,10 @@ def set_command():
                 )
                 print(f'[FPS_NEW_TASK]')
                 print(f'Requested new task for {content["name"]}')
-            if content['command'] == 'registrate': 
+            if content['command'] == 'register': 
                 data = {
                 "name": content['name'],
-                "command": "registrate",
+                "command": "register",
                 "psswd": content['psswd']
                 }
                 requests.post(
@@ -133,7 +133,7 @@ def set_command():
                     data=json.dumps(data),
                     headers=CONTENT_HEADER,
                 )
-                print(f'[FPS_REGISTRARE]')
+                print(f'[FPS_REGISTER]')
                 print(f'Successfully requested for {content["name"]}')
             if content['command'] == 'clear_flag': 
                 data = {

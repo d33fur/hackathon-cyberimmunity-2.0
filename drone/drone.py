@@ -65,8 +65,8 @@ def set_command():
                         print(f'[DRONE_SET_TASK]')
                         print(f'Point added!')
                         drone.task_points = content["points"]
-                if content['command'] == 'registrate':
-                    drone.registrate()
+                if content['command'] == 'register':
+                    drone.register()
                 
     except Exception as e:
         print(f'exception raised: {e}')

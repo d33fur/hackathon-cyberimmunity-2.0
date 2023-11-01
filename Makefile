@@ -1,10 +1,15 @@
+all: clean prepare build start delay10s test
+
+delay10s:
+	sleep 10
+
 sys-packages:
 	# sudo apt install -y docker-compose
 	sudo apt install python3-pip -y
 	sudo pip3 install pipenv
 
 pipenv:
-	pipenv install -r requirements-dev.txt	
+	pipenv install -r requirements-dev.txt
 
 prepare: clean sys-packages pipenv build
 
@@ -16,6 +21,8 @@ rebuild:
 
 run:
 	docker-compose up -d
+
+start: run
 
 run&draw:
 	xhost +local:docker
@@ -41,6 +48,8 @@ test:
 
 stop:
 	docker-compose stop
+
+restart: stop start
 
 clean:
 	@pipenv --rm || echo no environment to remove

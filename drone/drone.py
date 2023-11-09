@@ -4,7 +4,7 @@ import hashlib
 import os
 from random import randrange
 from flask import Flask, request, jsonify
-import Drone
+import implementation
 
 CONTENT_HEADER = {"Content-Type": "application/json"}
 ATM_ENDPOINT_URI = "http://atm:6064/data_in"
@@ -29,7 +29,7 @@ def set_command():
         # print(f'[DRONE_DEBUG] received {content}')
         if content['command'] == 'initiate':
             print(port)
-            tmp = Drone.Drone(content['coordinate'], content['name'], content['psswd'])
+            tmp = implementation.Drone(content['coordinate'], content['name'], content['psswd'])
             drones.append(tmp)
             print (f"Added in point {tmp.coordinate}")
         else:

@@ -24,10 +24,6 @@ run:
 
 start: run
 
-run&draw:
-	xhost +local:docker
-	docker-compose up -d
-
 restart:
 	docker-compose restart
 

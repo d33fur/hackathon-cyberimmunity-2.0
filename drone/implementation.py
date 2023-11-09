@@ -4,7 +4,6 @@ import requests
 import json
 import math
 import os
-from PIL import Image
 
 CONTENT_HEADER = {"Content-Type": "application/json"}
 ATM_ENDPOINT_URI = "http://atm:6064/data_in"

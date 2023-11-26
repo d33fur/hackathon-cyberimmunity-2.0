@@ -22,6 +22,7 @@ def handle_event(id, details_str):
         if details['operation'] == 'get_gps_coordinate':
             details['deliver_to'] = 'drone_navigation_handler'
             details['operation'] = 'gps_coordinate'
+            details['coordinate'] = True
             delivery_required = True
         else:
             print(f"[warning] unknown operation in gps!\n{details}")                

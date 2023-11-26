@@ -21,7 +21,7 @@ def handle_event(id, details_str):
         if details['operation'] == 'get_engines':
             details['operation'] = 'engines_status'
             details['deliver_to'] = 'drone_diagnostic'
-            details['battery_status'] = engines_efficiency_level
+            details['engines_status'] = engines_efficiency_level
         elif details['operation'] == 'change_engines':
             engines_efficiency_level += details['delta']        
         else:

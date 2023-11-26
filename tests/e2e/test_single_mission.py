@@ -29,6 +29,7 @@ def data_receive():
     global global_events_log
     try:
         content = request.json
+        # print(content)
         #print(f"received message: {content['device']} {content['value']}")
         global_events_log.put(content)                
     except Exception as _:

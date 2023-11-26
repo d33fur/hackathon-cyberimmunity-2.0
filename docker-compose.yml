@@ -192,5 +192,17 @@ services:
         - "6081:6081"
       depends_on:
         - broker 
+
+  drone_navigation_handler:
+      image: drone_navigation_handler
+      build:
+        context: .
+        dockerfile: ./Dockerfile.drone_navigation_handler
+      volumes:
+        - ./storage/:/storage
+      ports:
+        - "6086:6086"
+      depends_on:
+        - broker       
     
   

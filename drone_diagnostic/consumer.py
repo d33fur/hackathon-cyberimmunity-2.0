@@ -28,11 +28,11 @@ def handle_event(id, details_str):
             delivery_required = True
         elif details['operation'] == 'engines_status':
             status = True
-            if details['engine_status'] < 70:
+            if details['engines_status'] < 70:
                 status = False
-            details['operation'] = 'diagnostic_engine_status'
+            details['operation'] = 'diagnostic_engines_status'
             details['deliver_to'] = 'drone_com_val'
-            details['engine_status'] = status
+            details['engines_status'] = status
             delivery_required = True 
         elif details['operation'] == 'battery_status':
             status = details['flight_controller_status']

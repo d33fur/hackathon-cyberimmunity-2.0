@@ -119,8 +119,8 @@
 | monitoring | 3,5 | - |
 | battery_status | 3,5 | - |
 | navigation_handler | 3,5 | - |
-| INS | 3,5 | - |
-| GPS | 3,5 | - |
+| INS | 3 | - |
+| GPS | 3 | - |
 | css | - | - |
 | command_validator | 3,5 | - |
 | authentication_verification | - | - |
@@ -133,14 +133,51 @@
 
 ![Негативный сценарий 1](./docs/images/drone-inspector_negative_1.png)
 
-[ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/jLLTRn9157sVNp71nvRupeDfO_mmHcFKDsl85APqu-uiMGQIlhLObGILsFZiRw2qAwHK-XTc_f5dPhTCTmgqHYKXpCmzzypTSyzTDbgI9R8TXKG6CkIqf8vqNrsecPggNoh5Tw9IgiPgg4xnnLOFIeImjen5Ezhc2MaYFwW5JIOaBJtUlF_qmSiIPIswoshlU4Bl9BnUn3nyySe2TfejMenildvc8qn6nG0NjRZE4nkqwuN4TUvG-Re8gBLQDeXVBn174HFrQeU5GPt9EEFmJpqsQB3B1VPC1h6eTdWIxEGRcxuYNYGIh1Cqbf0iYNdb9u6ixgBKC7_wgmVBxYea-CT-sfFdMSy2uIdtA6zce-a5TiAzQYqMCed3oqkAHrxlag33i-vaIo_C92iKVFLW0RI5Rh46Tz3ye0YDOX7WF10D2tJR8coRIScJFOl9rmIVtE3bDyQ9Ryltviwiq6o0z3VTnSJCl05IAR78GYuiUNCU9O2vfEi6jGoftbUfITAVr92gCn2TMuPJtQSud-e1O03DrCY0WPYGQrJkcbL6hlXCGx82VJjEeyD8zr7zH1-ewVmbf3_eBxftmmsBLT7lmMIKwHbT5psixO0FNATGRgP-cZLgSYz6FT1T_Tbs0vdvkmRPHlWJKpR2-sZ0Hwm7MUOKf5qKduDD7fFHsjhjiaGiEOtnf2PfdLwIaAMvQCLKVpKEC0mueFe0q6C4IPb2prEZg-u2VeWT6eVrJEyZHF5xOFqt0g9lN7Y1CDYXHchkiJuoRGTgk9BET_I9cdb_9kiKgr66HkRONekOW_z0u4Xznz3KgT61G89SlklsGorROh4gMy99cWy6BZapO5STGEx9x4LkiClb2hKoZ6rER-vC0wQEt8stTHLwVDDWRubRyHg__VUn_yVptaWu5tyvySQK2FpndON_mOgHC_NU10umRzSYCIVmzg5rw7dc9ZibwfZYh8VTCQfAxwB0iPfQtLE2pmOSsux2tm00)
 
 **Негативный сценарий 2 - Подмена/Фальшивые входные данные:**
 
 ![Негативный сценарий 2](./docs/images/drone-inspector_negative_2.png)
 
-[ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/vLP9RzjM4BxpLpoabmQsYkvBK1GvzaSOA1YPTOJAf21I1dBp4jSE5DHeKA15WIu5sfufMepenSfVcFUF-isGJu-F8QCAFVQW87wS-MRvPfc7SUAFayd-q4i6oJ1Gz-Y5dj8hMj8DtL6ENq6veWMbDCSFV-gBUvxdJv8edEm_2iQUtq-YiVhIxtyJZ9KVgyVb_zuQ1xlU2DY3_c3aXmcG_u3oaJu6wYsbEo6it5IGXx2NhU0PPNSGZ_oa_nW6N91V8Vo2VX2XlUZ0_VhUEmfMCdr12_rSKIPI_MZ_gq7e2hxl2XQqM8b6ayIL_G2oVtCgz35iftIZdyFHL5_iXFh83KcVq2kHoH1QRiC1S9YCes7y96v9p8Smy8ie5NG9u6zPJRqz26DuflP6yNt12Fr6j9z2xpUOAw2vfBcUYbWSZ0-YMBcY7xCeawg_XxTteFWA15pZHQ8Ikk6nFXG8PdSq64P98xllIjPcjDI7x9aGXdnm-e0czS7O-bHGHkEe7yJn8DnpOJu2ob-S9LjWBTengihV2rpLJyI1b6uvNYYcT0cbfL1GqBLKLQ7aCt3nk9JqtD5bbPhXrxi3l-7FPm3zkPu9heWPfL1FyP1J8SgF_2G9nayyRsySJKQAVX8Ju6h56EffAbc4ecSBMFM-g6fmQ-k14iHBAHkOiso3mskO_awVcQJSzqejrhVrioc6rNHn12K5mZbqdrOTY0ow2gOZkgrwbGI4kH_Vu1xDnSeTR43GPWKA80gsuRFQKZ9yvdZAk1xf9SrDCAtv-FVQvM2g_7mWaXLRA25to5bnwwPeI0UrQNIxjrwhdI0P55qiIVkXtC0qqco63S3rAUKGJhqmIW8L7I02HBjjXc0NDRPmKiu87XHWSvhXezU3jJAFY05kbArMTfSuWWQKs3APB3c7ZCwHFitPZfxMo5y3vsRhafQDvREjU5AkMdjXDeSLhpQ45uIxYhCWrMPP5p-aEgf4xeJjMTa9wmsjocb9ronilODGewnN1TFhbUpHGbJELnonhBBO7Ms-jdB4x_Necmu0jGNgRO9iHTM0Fk_nDfBMov6H4_sCJKkAX9Uv35rmggUU6RfGCZCKYiWqVuVgKGFOoBCGLvPGVM62a_QkhztryPrn1XKlQ5JYENudR9lBmnj64KzoHZAy2vLbkgl6cgzAJ3p8IbAlMB1rrJHdg5sd8BMbD-GIOlkvl3qpXuEtqdD06d7LJmvzWHO65VgqfE9Ml9wxGELz05TQLIbtL9a_aRUQ225hEn4x3BxEIOwIFU4jMvO0mdVn9FYMQcilhsxwcwtEhRgw5LwA8UbosrMsgIt5LQMuPknf8vI-jdObJDWeE2DTHL8Mt--KoaM5NBYrHNcNehNk-Y8TOwupn5KxprJzld81pALLzTjfzsNcQgvdLa_NzCV6vCgbKOqTjARfePB7NYk6l7VSYZq9cMO8xPWnsjqLmQf5CtmxC-FXgT2sxF6hBBHb_HYo1s2NmrHibZJdq6hFcBlsbKSPP1O2A1KlAqGQ0twO3fbpwzcEgE-Tr6CdZyNDcJi7xyfme8t0gjwv4brz90rrJONTmPkqAIy5WF9R0KXnMJxhyrhNtieEE898ySOEhIpaihbJCrwxksityFl9uC177Ys8EVf_RBeYEDQJRJXMfZnhMfErF8C-wDviGQZ_zNvG_saze38CTtzIOGUYEV8SzbJxmC4XPyL4frcHpURSIDuEYhLg4iv3_3FP7_u3)
 
+**Негативный сценарий 3 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 3](./docs/images/drone-inspector_negative_3.png)
+
+
+**Негативный сценарий 4 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 4](./docs/images/drone-inspector_negative_4.png)
+
+
+**Негативный сценарий 5 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 5](./docs/images/drone-inspector_negative_5.png)
+
+
+
+**Негативный сценарий 6 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 6](./docs/images/drone-inspector_negative_6.png)
+
+
+**Негативный сценарий 7 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 7](./docs/images/drone-inspector_negative_7.png)
+
+
+**Негативный сценарий 8 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 8](./docs/images/drone-inspector_negative_8.png)
+
+
+**Негативный сценарий 9 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 9](./docs/images/drone-inspector_negative_9.png)
+
+
+**Негативный сценарий 10 - Подмена/Фальшивые входные данные:**
+
+![Негативный сценарий 10](./docs/images/drone-inspector_negative_10.png)
 
 
 ### Политики безопасности 

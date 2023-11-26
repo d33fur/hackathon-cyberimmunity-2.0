@@ -81,14 +81,14 @@
 |*fly_controller(полётный котроллер)* | Управляет приводами. | Недоверенный. |
 |*drives(приводы)* | Включаются и выключаются по командам. | Недоверенный. |
 |*monitoring* | Проводит самодиагностику и мониторинг состояния "хардверных" компонентов. | Недоверенный. |
-|*battery_status* | Смотрит на заряд батареи и отдает значение в мониторинг | Недоверенный. |
+|*battery* | Смотрит на заряд батареи и отдает значение в мониторинг | Недоверенный. |
 |*navigation_handler(обработчик навигационных данных)* | Обрабатывает навигационные данные от ИНС и GPS и передает в шину данных. | Повышающий доверие, т.к. использует алгоритмы для улучшения данных на основе двух источников. |
 |*INS(Инс)* | Имитатор системы ИНС. | Недоверенный. |
 |*GPS* | Имитатор системы GPS. | Недоверенный. |
-|*data_handler(обработчик данных)* | Внутри себя имеет камеру, обрабатывает фото и видео для последующей передачи. | Недоверенный. |
-|*data_storage(хранилище данных)* | Хранит данные. | Недоверенный. |
+|*data_handler(обработчик данных)* | Внутри себя имеет камеру, обрабатывает фото и видео для последующей передачи, шифрует данные. | Недоверенный. |
+|*data_storage(хранилище данных)* | Хранит зашифрованные данные. | Недоверенный. |
 |*command_validator(валидатор комманд и шина данных)* | Управляет данными. Выдает только после успешной проверки соседними компонентами(проверка на аутентичность и авторизованность, уточнение навигации), так же отправляет на проверку команды CSS. | Недоверенный. |
-|*navigation_verification(валидация навигационных данных)* | Проверяет сходятся ли навигационные данные с заданным маршрутом. | Повышающий доверие, т.к. сравнивает данные маршрута и геолокацию. |
+|*navigation_verification(валидация навигационных данных)* | Проверяет сходятся ли текущие навигационные данные с заданным маршрутом. | Повышающий доверие, т.к. сравнивает данные маршрута и геолокацию. |
 |*authentication_verification(проверка команд на аутентичность и авторизованность)* | Проверяет аутентичны ли команды с помощью какой нибудь подписи или ключа. | Повышающий доверие, т.к. проверяет данные. |
 |*crit_handler(Обработчик критических ситуаций)* | При условии, что какая-нибудь из проверок неуспешна, перехватывает управление полетным контроллером или отключает питание с батареи. | Доверенный. |
 
@@ -107,25 +107,35 @@
 
 [ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/xLZTRjis5BxdKn2vRVm2mJ1qDnjsiM70TcaWK6F55M1BWQq4w5tiDakA53LM3DYkXWtO0yYkLRjnxBq2-KRxU4I18IKgph8DAE0BsHJFTtvuVWv9FHscmI0zxVTO6gMzaE-9T_9Q_2KsOYNM8iUp53aN2v69EHwyoiaUOy5fciId_MVXW9s0FpgAJe8uvNjVVlVz7W-6_FXaQ1E--E4R8WHftoQ4yL7I2GT4r6CRq0aD0ECgu6Wu92B-7KBIxmTnv_0iw4MT84qA6PLPcmahUnx6U0_IA8aFpy91TAnVYBs1RWkAWxEewn7YeJdc3wBqy3bCxUdLtvtmwR8Ot6cNxUjlYsX5iUEvhtGOksuOZtil3e-IE1qalLA9FUN4RX2TXKLqYg533jB0ClZkH0rqY6W5tT10zOGDxITnXFaexXBGlDgmPq6QXeCNXD5ZnbXta9oUSF4hPVgFIFvC_Se95pFKnKhaSYmoXlJchS_BV3tWHS78dq1SOsGNZCYP1e97PUdzU820hQOgSURoNEGAB2z5niKD1DmIvrnUSyolv0GmW3PYfi10B5b55EGtvVA1Ao9Z3MYFiVAb7971LsgPzJPWgIvmdujRQFwWnl2xwKTo8iVoJUcTJgYzJ_vuZoYDG3wlZvW6qwhJ_fCdst75IHho12jLJFky5CAyl73KIhvLWL4ICC7b2D0fYAp54Tkvwgbo3FWhlC6j66_aEKXSR81TaylNi25NiSwKT7WZLteel2eeG6NDukm4WwaRfuVlSunc1HgS2r8Bce7_1i8xyJDojyEL7nXSeDrNJGxOqexhlTAEZKlBV5sB6mKsrW5aLaQAJ7crMXIiJ2o8vyhiIW3VYPTJPOZnVNNMZhUHsrYDksgCOl9ETQ-fSyyIR2FMFTcU1LXM1Jua7fJYSwLQbGSAacDkIf6VWZO6a4gdoIDZoBo1NrvJWbIbocjMR72AnUmuu4Gj400-PVPMsGZLEr8ZnX1y4H-fda95Fj6vJS6RWx0aGYvklSlUafypO0qBt0hAPT7-RbK3arTuNYgxLIzXZFMI15li7s95WQB6KqgVaG3nKNK2oZj5ABiKnkz5jYl7RJP7EzMe5rPsatPSEepcNkEVzWPlyZNdiZrZKa6rNoo2N8OzHuL0lbML92-i03aY7wYzA3yij5QLo9rSU8YoGhHHSc3vdRpcAlWdtS31KbmMMCnAlYcusd5LhvpyIsq0lRb69Q_J-7-q_6evVDQgSlytBP_Kt5_rjRgOXzaJ6bUYNUpPetkpMDPlLjI8TQ-mRbtKASmnjinjyl07397VlhvSDlRVIoy3QZLqaVjOxrhWMaHBdIeu7J9LVU5PWNV1zL4EnsLvuGgnReZQNnVA65EoaEONK1-mQed8Qz-g_C5xZ1H_9TG5-fDDSCzoXlR5cz9yXKTlQiM5erNBhERfFODVrxfwg0qeYXnHYxZ676HuWW5WsN1ce5tgMuLy1H20BJLBTxBDtSi8lXRuB1NBX-I24KhNC8-Fh4ihPs86p48V6f3uT0UYiC2ECZvpwl14f-MRYnEqAYF7PERKFgsjY-M0UwKuoHiVYLUEw9w5mvMvFvfZOZKjsZ7bnOhcbX12HXAvl9YHkswfjuq0MVfxc1QVqoKpAyyr3Tqd38xIw2n8GqkC-HhqYsiBoJAcxBTZxUMPgv6kabFm8yAFFhdkJgwxa-lkvBexkUvEhhen_qa4VHeiFpXQhPbJMx4_9XewmEv6Kzrb7uB7LhyDliEUukUqt_iR)
 
+#### Дублирование целей безопасности:
+
+1. Выполняются только аутентичные задания на мониторинг 
+2. Выполняются только авторизованные системой ОрВД задания 
+3. Все манёвры выполняются согласно ограничениям в полётном задании (высота, полётная зона/эшелон) 
+4. Только авторизованные получатели имеют доступ к сохранённым данным фото-видео фиксации 
+5. В случае критического отказа дрон снижается со скоростью не более 1 м/с 
+6. Для запроса авторизации вылета к системе ОрВД используется только аутентичный идентификатор дрона 
+7. Только авторизованные получатели имеют доступ к оперативной информации
+
 
 ### Описание Сценариев (последовательности выполнения операций), при которых ЦБ могут нарушаться
 
  Взломанный модуль | Нарушенная ЦБ | Комментарий |
 |----|----| ----|
-| encoder | - | - |
+| encoder | 4,7 | Фиксится большей декомпозицией сетевого модуля на более мелкие сущности |
 | decoder | - | - |  
-| fly_controller | 3,5 | - |
-| drives| 3,5 | - |
-| monitoring | 3,5 | - |
-| battery_status | 3,5 | - |
-| navigation_handler | 3,5 | - |
-| INS | 3 | - |
-| GPS | 3 | - |
+| fly_controller | 3,5 | Фиксится добавлением запасных независимых приводов |
+| drives| 3,5 | Фиксится добавлением запасных независимых приводов |
+| monitoring | 3,5 | Фиксится добавлением запасных независимых приводов |
+| battery_status | 3,5 | Фиксится добавлением запасных независимых приводов |
+| navigation_handler | 3,5 | Фиксится добавлением запасных независимых приводов |
+| INS | 3 | Фиксится добавлением какого нибудь еще источника информации о текущем местоположении(wifi, bluetooth, радио) |
+| GPS | 3 | Фиксится добавлением какого нибудь еще источника информации о текущем местоположении(wifi, bluetooth, радио) |
 | css | - | - |
-| command_validator | 3,5 | - |
+| command_validator | 3,5 | Фиксится добавлением запасных независимых приводов |
 | authentication_verification | - | - |
-| navigation_verification | 3,5 | - |
-| crit_handler | 3,5 | - |
+| navigation_verification | 3,5 | Фиксится добавлением запасных независимых приводов |
+| crit_handler | 3,5 | Фиксится добавлением запасных независимых приводов |
 | data_storage | - | - |
 | data_handler | - | - |
 

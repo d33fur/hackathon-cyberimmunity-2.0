@@ -8,7 +8,7 @@ import json
 _requests_queue: multiprocessing.Queue = None
 
 def proceed_to_deliver(id, details):
-    details['source'] = 'drone_gps'
+    details['source'] = 'drone_navigation_handler'
     _requests_queue.put(details)
 
 
@@ -22,7 +22,7 @@ def producer_job(_, config, requests_queue: multiprocessing.Queue):
     topic = 'monitor'
     while True:
         event_details = requests_queue.get() 
-        event_details['source'] = 'drone_gps'        
+        event_details['source'] = 'drone_navigation_handler'        
         producer.produce(topic, json.dumps(event_details), event_details['id'],  
             callback=delivery_callback
         )

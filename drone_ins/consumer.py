@@ -17,8 +17,8 @@ def handle_event(id, details_str):
     
     try:
         delivery_required = False
-        if details['operation'] == 'get_coordinate':
-            details['deliver_to'] = 'drone_ccu'
+        if details['operation'] == 'get_ins_coordinate':
+            details['deliver_to'] = 'drone_navigation_handler'
             details['operation'] = 'ins_coordinate'
             delivery_required = True
         else:

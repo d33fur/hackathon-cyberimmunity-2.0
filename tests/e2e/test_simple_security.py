@@ -159,15 +159,13 @@ def clear_flag(name, psswd):
     
 
 ###
-### Functionally tests
+### Security tests
 ###
 
-def test_single_full_functionality():
+def test_bad_psswrd():
     global global_events_log
     server = Process(target=lambda: app.run(port=port, host=host_name))
     server.start()
-
-
 
     initiate("ITEM1", [2,2,2], 12345)
     sleep(2)
@@ -177,10 +175,10 @@ def test_single_full_functionality():
     sleep(1)
     new_task("ITEM1", [[4,4,2,0],[3,7,2,1],[10,10,3,1]], 12345)
     sleep(3)
-    start("ITEM1", 1, 12345)
-    sleep(35)
+    start("ITEM1", 1, 123456)
+    sleep(10)
     sign_out("ITEM1", 12345)
-    sleep(1)
+    sleep(5)
 
     # stop
     server.terminate()
@@ -197,24 +195,46 @@ def test_single_full_functionality():
         pass
         
     #print(f"list: {events_log}")
-    assert len(events_log) > 20
-    assert events_log[random.randint(0,len(events_log)-1)]['token'] != ''
-    x_reached = False
-    y_reached = False
-    z_reached = False
+    assert len(events_log) == 0
+
+
+def test_bad_coord():
+    global global_events_log
+    server = Process(target=lambda: app.run(port=port, host=host_name))
+    server.start()
+
+    initiate("ITEM1", [200,200,2], 12345)
+    sleep(3)
+    register("ITEM1", 12345)
+    sleep(3)
+    set_area([-1,-1,100,100])
+    sleep(3)
+    new_task("ITEM1", [[4,4,2,0],[3,7,2,1],[10,10,3,1]], 12345)
+    sleep(5)
+    start("ITEM1", 1, 12345)
+    sleep(10)
+    sign_out("ITEM1", 12345)
+    sleep(5)
+
+    # stop
+    server.terminate()
+    server.join()
+    
+    events_log = []
+    try:
+        # read
+        while True:
+            event = global_events_log.get_nowait()
+            events_log.append(event)
+    except Exception as _:
+        # no events
+        pass
+        
+    #print(f"list: {events_log}")
+    assert len(events_log) < 20
+    stop_flag = False
 
     for i in events_log:
-        if i['coordinate_x'] > 9: 
-            x_reached = True
-        if i['coordinate_y'] > 9: 
-            y_reached = True    
-        if i['coordinate_z'] == 3: 
-            z_reached = True
-    assert (x_reached & y_reached & z_reached) == True
-    assert ((abs(events_log[len(events_log)-1]['coordinate_x'] - 2) <= 1) & (abs(events_log[len(events_log)-1]['coordinate_y'] - 2) <= 1)) == True
-
-
-
-
-
-
+        if 'emergency_stop' in i: 
+            stop_flag = True
+    assert stop_flag == True

@@ -4,10 +4,11 @@ import requests
 import json
 from random import randrange
 from flask import Flask, request, jsonify
+from cryptography.fernet import Fernet
 
 
 CONTENT_HEADER = {"Content-Type": "application/json"}
-#DRONE_ENDPOINT_URI = "http://drone:6066/set_command"
+DRONE_ENDPOINT_URI = "http://drone_communication_in:6073/set_command"
 ATM_ENDPOINT_URI = "http://atm:6064/new_task"
 
 drones = []
@@ -18,17 +19,24 @@ app = Flask(__name__)             # create an app instance
 
 class Drone:
 
-    def __init__(self, coordinate, name, psswd, port, index):
+    def __init__(self, coordinate, name, psswd):
         self.coordinate = coordinate
         self.name = name
         self.psswd = psswd
         self.status = "Initiated"
-        self.endpoint = "http://drone" + str(index) + ":" + str(port) + "/set_command"
+        self.endpoint = DRONE_ENDPOINT_URI
+
+
+def encrypt(data):
+    key = b'tgbSXNRH_HbnAw6JWLPtz48eBxigUx8ERJLkbATjZzY='
+    f = Fernet(key)
+    encrypted_data = f.encrypt(data)
+    return encrypted_data
+
 
 @app.route("/set_command", methods=['POST'])
 def set_command():
     content = request.json
-    # print(f'[FPS_DEBUG] received {content}')
     global drones
     try:
         if content['command'] == 'initiate':
@@ -41,16 +49,21 @@ def set_command():
                     drones[i].coordinate= content['coordinate']
                     drones[i].psswd = content['psswd']
                     drones[i].name = content['name']
+
                     data = {
                     "name": content['name'],
                     "command": "initiate",
                     "coordinate": content['coordinate'],
                     "psswd": content['psswd']
                     }
-                    print(drones[i].endpoint)
+
+                    data = json.dumps(data)
+                    data = data.encode()
+                    data = encrypt(data)
+                    
                     requests.post(
                         drones[i].endpoint,
-                        data=json.dumps(data),
+                        data = data,
                         headers=CONTENT_HEADER,
                     )
                     print(f'[FPS_INITIATE]')
@@ -59,14 +72,7 @@ def set_command():
                 print(f'[FPS_INITIATE_ERROR]')
                 print(f'Not enough drones for this task')
         else:
-            drone = list(filter(lambda i: content['name'] == i.name, drones))
-            if len(drone) > 1:
-                print(f'[FPS_SET_COMMAND_ERROR]')
-                print(f'Nonunique name: {content["name"]}')
-                return "BAD ITEM NAME", 400
-
-            drone = drone[0]
-
+            drone = drones[0]
             ###
             if content['command'] == 'start':
                 data = {
@@ -75,9 +81,12 @@ def set_command():
                 "psswd": content['psswd'],
                 "speed": content['speed']
                 }
+                data = json.dumps(data)
+                data = data.encode()
+                data = encrypt(data)
                 requests.post( 
                     drone.endpoint,
-                    data=json.dumps(data),
+                    data=data,
                     headers=CONTENT_HEADER,
                 )
                 print(f'[FPS_START]')
@@ -88,9 +97,12 @@ def set_command():
                 "command": content['command'],
                 "psswd": content['psswd']
                 }
+                data = json.dumps(data)
+                data = data.encode()
+                data = encrypt(data)
                 requests.post(
                     drone.endpoint,
-                    data=json.dumps(data),
+                    data=data,
                     headers=CONTENT_HEADER,
                 )
                 print(f'[FPS_STOP]')
@@ -103,9 +115,12 @@ def set_command():
                 "command": content['command'],
                 "psswd": content['psswd']
                 }
+                data = json.dumps(data)
+                data = data.encode()
+                data = encrypt(data)
                 requests.post(
                     drone.endpoint,
-                    data=json.dumps(data),
+                    data=data,
                     headers=CONTENT_HEADER,
                 )
                 print(f'[FPS_SIGN_OUT]')
@@ -128,9 +143,12 @@ def set_command():
                 "command": "register",
                 "psswd": content['psswd']
                 }
+                data = json.dumps(data)
+                data = data.encode()
+                data = encrypt(data)
                 requests.post(
                     drone.endpoint,
-                    data=json.dumps(data),
+                    data=data,
                     headers=CONTENT_HEADER,
                 )
                 print(f'[FPS_REGISTER]')
@@ -141,15 +159,16 @@ def set_command():
                 "command": "clear_flag",
                 "psswd": content['psswd']
                 }
+                data = json.dumps(data)
+                data = data.encode()
+                data = encrypt(data)
                 requests.post(
                     drone.endpoint,
-                    data=json.dumps(data),
+                    data=data,
                     headers=CONTENT_HEADER,
                 )
                 print(f'[FPS_CLEAR_FLAG]')
                 print(f'Successfully requested for drone {content["name"]}')
-        # else:
-        #     print(f'[ATM_NEW_TASK] something went wrong during creating new task for drone {content["name"]}') 
 
     except Exception as e:
         print(e)
@@ -163,13 +182,8 @@ def data_in():
 
     global drones
     try:
-        drone = list(filter(lambda i: content['name'] == i.name, drones))
-        if len(drone) > 1:
-            print(f'[FPS_DATA_IN_ERROR]')
-            print(f'Nonunique name: {content["name"]}')
-            return "BAD ITEM NAME", 400
 
-        drone = drone[0]
+        drone = drones[0]
         print(f'[FPS_DATA_IN]')
         
         if content['operation'] == 'log':
@@ -190,22 +204,20 @@ def atm_input():
     content = request.json
     global drones
     try:
-        drone = list(filter(lambda i: content['name'] == i.name, drones))
-        if len(drone) > 1:
-            print(f'[FPS_ATN_INPUT_ERROR]')
-            print(f'Nonunique name: {content["name"]}')
-            return "BAD ITEM NAME", 400
 
         if content['task_status'] == 'Accepted':
             data = {
                "name": content['name'],
                "points": content['points'],
                "command": 'set_task',
-               "psswd": drone[0].psswd
+               "psswd": drones[0].psswd
             }
+            data = json.dumps(data)
+            data = data.encode()
+            data = encrypt(data)
             requests.post(
-                drone[0].endpoint,
-                data=json.dumps(data),
+                drones[0].endpoint,
+                data=data,
                 headers=CONTENT_HEADER,
             )
             print(f'[FPS_NEW_TASK]')
@@ -222,12 +234,10 @@ def atm_input():
 
 if __name__ == "__main__":
 
-    ###
-    for i in range(3):
-        tmp = Drone([0,0,0], "ITEM" + str(i+1), 12345, 6066 + i, i)
-        drones.append(tmp)
-        print("Added drone " + tmp.name + " port: " + tmp.endpoint)
-    ###
+
+    tmp = Drone([0,0,0], "ITEM1", 12345)
+    drones.append(tmp)
+    print("Added drone " + tmp.name + " uri: " + tmp.endpoint)
 
     app.run(port = port, host=host_name)
     

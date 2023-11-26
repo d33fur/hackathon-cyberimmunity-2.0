@@ -6,7 +6,7 @@ auth: very-secure-token
 {
     "command" : "initiate",
     "name" : "ITEM1",
-    "coordinate" : [2,2,2],
+    "coordinate" : [200,200,2],
     "psswd": 12345
 }
 
@@ -77,7 +77,7 @@ auth: very-secure-token
     "psswd": 12345
 }
 
-### Переместиться в точку (ручной режим)
+### Переместиться в точку (ручной режим, более недоступен)
 POST http://0.0.0.0:6065/set_command HTTP/1.1
 content-type: application/json
 auth: very-secure-token

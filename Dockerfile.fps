@@ -9,6 +9,7 @@ RUN python -m pip install -r requirements.txt
 
 COPY fps /fps
 
+
 WORKDIR /fps
 CMD ["python", "fps.py"]
 EXPOSE 6065

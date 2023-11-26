@@ -1,5 +1,82 @@
 all: clean prepare build start delay10s test
 
+
+create-topics:
+		docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic monitor \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_battery_control \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_ccu \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_communication_in \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_communication_out \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1 
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic data_aggregation \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic data_saver \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_diagnostic \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_engines \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1 
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_flight_controller \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_gps \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1 
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_ins \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  
+
+
 delay10s:
 	sleep 10
 

@@ -13,7 +13,7 @@ COPY config.ini /drone_navigation_handler/
 #RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /scada
 #USER appuser
 
-WORKDIR /drone_gps
+WORKDIR /drone_navigation_handler
 ENV FLASK_DEBUG=1
 CMD ["python", "drone_navigation_handler.py", "config.ini"]
 

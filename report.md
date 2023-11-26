@@ -82,13 +82,12 @@
 |*navigation_handler(обработчик навигационных данных)* | Обрабатывает навигационные данные от ИНС и GPS и передает в шину данных. | Повышающий доверие, т.к. использует алгоритмы для улучшения данных на основе двух источников. |
 |*INS(Инс)* | Имитатор системы ИНС. | Недоверенный. |
 |*GPS* | Имитатор системы GPS. | Недоверенный. |
-|*camera* | Камера для видео и фото фиксации. | Недоверенный. |
-|*data_handler(обработчик данных)* | Обрабатывает фото и видео для последующей передачи. | Повышающий доверие, т.к. обрабатывает данные. |
-|*data_storage(хранилище данных)* | Хранит данные. | Доверенный. |
-|*command_validator(валидатор комманд и шина данных)* | Управляет данными. Выдает только после успешной проверки соседними компонентами(проверка на аутентичность и авторизованность, уточнение навигации и проверка валидности получателя), так же отправляет на проверку команды CSS. | Недоверенный. |
+|*data_handler(обработчик данных)* | Внутри себя имеет камеру, обрабатывает фото и видео для последующей передачи. | Недоверенный. |
+|*data_storage(хранилище данных)* | Хранит данные. | Недоверенный. |
+|*command_validator(валидатор комманд и шина данных)* | Управляет данными. Выдает только после успешной проверки соседними компонентами(проверка на аутентичность и авторизованность, уточнение навигации), так же отправляет на проверку команды CSS. | Недоверенный. |
 |*navigation_verification(валидация навигационных данных)* | Проверяет сходятся ли навигационные данные с заданным маршрутом. | Повышающий доверие, т.к. сравнивает данные маршрута и геолокацию. |
 |*authentication_verification(проверка команд на аутентичность и авторизованность)* | Проверяет аутентичны ли команды с помощью какой нибудь подписи или ключа. | Повышающий доверие, т.к. проверяет данные. |
-|*crit_handler(Обработчик критических ситуаций)* | При условии, что все проверки прошли успешно, отдает команду на CSS, в ином случае перехватывает управление полетным контроллером. | Доверенный. |
+|*crit_handler(Обработчик критических ситуаций)* | При условии, что какая-нибудь из проверок неуспешна, перехватывает управление полетным контроллером или отключает питание с батареи. | Доверенный. |
 
 ### Операции
 | Назначение           | Источник             | Канал | Операция                  | Параметры |
@@ -103,19 +102,10 @@
 
 ![Диаграмма последовательности](./docs/images/drone-inspector_sd.png)
 
-[ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/vLRTRkDK4BxtKnpjxJP8_CCA8HwaDzxMb4XPEuhTIdlNj9HsbHKHAoGG4Zz8mBNhnCHDM_SLvhmHtuoFVNoyDb759HUfL7k-RsQ--HadusGIg2VqHY_eWKgwfNlAyIieLxIXbDRuuL-zVE9v_d4IXSSldWSpR-hFal71UEg72T2_ms2kpu2yetG_1DEjWPs2Csieb1-hmt4yzPE3hzuY-GN6R-XxCJgAJjotxxwZu2NJIzhers9o48MXQ_C-RFxYwFKPg5AwrQ_XDzNB_L3FtGZrEJs8JOP8SniTioQpQ1A_Z5tk3y3zizWNj0BdDmqYz3kXVWBJNq5UmBYajLw8MHpCJg9OkQOViIchhhz3RFUemGtKsr9fSi0RZa-V2WNBFnrFeiGbUK-akQPIdoegb8YDvE5_0pAf7rFh2o6PpgA388x7uP7ByY5O_cH9R0FqeECaclb7WGlzM098eIpI1J2b5K2bw5tGLZgYKF8Ql7XOYZhtj3BAJBuy7FkTU3u5wKzM22wcGf8fu2aUv5G8-BcV9C7ifUSTpQBZgQ8VnGMgKzT8eMaM8YA0dcq-DVfSMkYPeWTR0IexVK-vnrQmvfvy-lIP4kShQIT4rkycZ990HIVm0j1UrQg3EDh2-xVwab96uu7ISvXUuwKtKWXXNVKqpByMFQ51KsoeB55dqZqv9mDvf1Wv-z4BHMiH44snWyxLOKLbPmFiAHw0fdwRUhIjkHbXBmWF5MlW8NqZ7UjijW7wcTqYblsmNvNzi2sdgYQ2jcnieuEHpKmScPAEHbAbb3O2kB8B3PQjGZMLjKEF0k_g1ubvDxVbL9-Di2GWWAoVhJxNhmGXMK5AcHcW8S32guU1GQQt0OGu_1xGUOUujcSZCtAbNfgO99DrU_UrqKxYbM8mk-J4CQpSHleAltFspHNr9b4qnQJBnbmtnHT7cS3fXglHE-cKkgxjCeFaFLqhHoHdZUNPgtf9UmtE8Uc4trxlUedXWkBwebByJg9UEqHcEoEKNYZb3bJAnFOMYHIolWiwuF1jwNCqr3alkQhIIB_BX-Hxcgg_YuQht1r27g9cLVzTEy9Js_FDkDaIcuPmtTZB8YMrUyse8Md2Hy6A33I9wR7VA9M31YtStg9y26YzEx78O3J74NcrhgDgdxSEWJbqPgmkXW-ZYznTMRtOCH-FBsvOhHQPIpD0LH57lGJoVE1EZoHVkaPUPypH7wiOcldCyExIB4eSb98DHvIPErCsEzPUtg5egNYSNFOizmlbNc7boUVOHjYaqQkz_b0TbNemrZnnTX3Qno3rEC8pYV7QNN_tLIv08oipCZU2rNEPeoqLzYW-PZfvvOEq54Llgf3bjRvg3UkTRFWvJ8f_7KpZ8PTJcjPRTNYe3WF_81cV-D3HajIVMZzqGn4U6yaU0giapxhUK27vcEDQF-ukgF_rML3_vIf8PvZQ_K65tOFsMxHLFTMcjHzMraO0tNRiZkLku-vos8MHBBmlyFVunUGV)
+[ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/xLZTRjis5BxdKn2vRVm2mJ1qDnjsiM70TcaWK6F55M1BWQq4w5tiDakA53LM3DYkXWtO0yYkLRjnxBq2-KRxU4I18IKgph8DAE0BsHJFTtvuVWv9FHscmI0zxVTO6gMzaE-9T_9Q_2KsOYNM8iUp53aN2v69EHwyoiaUOy5fciId_MVXW9s0FpgAJe8uvNjVVlVz7W-6_FXaQ1E--E4R8WHftoQ4yL7I2GT4r6CRq0aD0ECgu6Wu92B-7KBIxmTnv_0iw4MT84qA6PLPcmahUnx6U0_IA8aFpy91TAnVYBs1RWkAWxEewn7YeJdc3wBqy3bCxUdLtvtmwR8Ot6cNxUjlYsX5iUEvhtGOksuOZtil3e-IE1qalLA9FUN4RX2TXKLqYg533jB0ClZkH0rqY6W5tT10zOGDxITnXFaexXBGlDgmPq6QXeCNXD5ZnbXta9oUSF4hPVgFIFvC_Se95pFKnKhaSYmoXlJchS_BV3tWHS78dq1SOsGNZCYP1e97PUdzU820hQOgSURoNEGAB2z5niKD1DmIvrnUSyolv0GmW3PYfi10B5b55EGtvVA1Ao9Z3MYFiVAb7971LsgPzJPWgIvmdujRQFwWnl2xwKTo8iVoJUcTJgYzJ_vuZoYDG3wlZvW6qwhJ_fCdst75IHho12jLJFky5CAyl73KIhvLWL4ICC7b2D0fYAp54Tkvwgbo3FWhlC6j66_aEKXSR81TaylNi25NiSwKT7WZLteel2eeG6NDukm4WwaRfuVlSunc1HgS2r8Bce7_1i8xyJDojyEL7nXSeDrNJGxOqexhlTAEZKlBV5sB6mKsrW5aLaQAJ7crMXIiJ2o8vyhiIW3VYPTJPOZnVNNMZhUHsrYDksgCOl9ETQ-fSyyIR2FMFTcU1LXM1Jua7fJYSwLQbGSAacDkIf6VWZO6a4gdoIDZoBo1NrvJWbIbocjMR72AnUmuu4Gj400-PVPMsGZLEr8ZnX1y4H-fda95Fj6vJS6RWx0aGYvklSlUafypO0qBt0hAPT7-RbK3arTuNYgxLIzXZFMI15li7s95WQB6KqgVaG3nKNK2oZj5ABiKnkz5jYl7RJP7EzMe5rPsatPSEepcNkEVzWPlyZNdiZrZKa6rNoo2N8OzHuL0lbML92-i03aY7wYzA3yij5QLo9rSU8YoGhHHSc3vdRpcAlWdtS31KbmMMCnAlYcusd5LhvpyIsq0lRb69Q_J-7-q_6evVDQgSlytBP_Kt5_rjRgOXzaJ6bUYNUpPetkpMDPlLjI8TQ-mRbtKASmnjinjyl07397VlhvSDlRVIoy3QZLqaVjOxrhWMaHBdIeu7J9LVU5PWNV1zL4EnsLvuGgnReZQNnVA65EoaEONK1-mQed8Qz-g_C5xZ1H_9TG5-fDDSCzoXlR5cz9yXKTlQiM5erNBhERfFODVrxfwg0qeYXnHYxZ676HuWW5WsN1ce5tgMuLy1H20BJLBTxBDtSi8lXRuB1NBX-I24KhNC8-Fh4ihPs86p48V6f3uT0UYiC2ECZvpwl14f-MRYnEqAYF7PERKFgsjY-M0UwKuoHiVYLUEw9w5mvMvFvfZOZKjsZ7bnOhcbX12HXAvl9YHkswfjuq0MVfxc1QVqoKpAyyr3Tqd38xIw2n8GqkC-HhqYsiBoJAcxBTZxUMPgv6kabFm8yAFFhdkJgwxa-lkvBexkUvEhhen_qa4VHeiFpXQhPbJMx4_9XewmEv6Kzrb7uB7LhyDliEUukUqt_iR)
 
 
 ### Описание Сценариев (последовательности выполнения операций), при которых ЦБ могут нарушаться
-
- Название | Атакованный модуль | Нарушенная ЦБ | Комментарий |
-|----|----|----| ----|
-|*1. Взлом и подмена команд* | decoder/css/command_validator | - | Отказ в выполнении команд при проверке в authentication_verificator |
-|*2. Взлом и передача ложных комманд на приводы* | fly_controller/drives | 3,5 | drives и fly_controller передают свои данные на monitoring, дальше по цепочке доходит до crit_handler, он сравнивает текущие данные с ожидаемыми и выключает подачу питания на приводы |
-|*3. Взлом и подмена данных состояния "хардверных" компонентов* | monitoring/battery_status/drives/command_validator | 3,5 | crit_handler обработает данные и передаст нужные указания для остановки работы и аварийной посадки/ внезапно разрядится батарея/ внезапно выйдут из строя приводы|
-|*4. Взлом и подмена навигационных данных* | navigation_verification/navigation_handler/INS+GPS/command_validator | 3,5 | - |
-|*5. Взлом encoder* | encoder | - | потеря/порча данных(не противоречит ЦБ) |
-|*6. Взлом и подмена фото/видео данных* | - | camera/data_handler/data_storage/command_validator | не противоречит ЦБ |
 
  Взломанный модуль | Нарушенная ЦБ | Комментарий |
 |----|----| ----|
@@ -135,13 +125,12 @@
 | crit_handler | 3,5 | - |
 | data_storage | - | - |
 | data_handler | - | - |
-| camera | - | - |
 
-**Негативный сценарий 1 - DOS атака на communication_in:**
+**Негативный сценарий 1 - Взлом encoder:**
 
 ![Негативный сценарий 1](./docs/images/drone-inspector_negative_1.png)
 
-[ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/vLRTRkDK4BxtKnpjxJP8_CCA8HwaDzxMb4XPEuhTIdlNj9HsbHKHAoGG4Zz8mBNhnCHDM_SLvhmHtuoFVNoyDb759HUfL7k-RsQ--HadusGIg2VqHY_eWKgwfNlAyIieLxIXbDRuuL-zVE9v_d4IXSSldWSpR-hFal71UEg72T2_ms2kpu2yetG_1DEjWPs2Csieb1-hmt4yzPE3hzuY-GN6R-XxCJgAJjotxxwZu2NJIzhers9o48MXQ_C-RFxYwFKPg5AwrQ_XDzNB_L3FtGZrEJs8JOP8SniTioQpQ1A_Z5tk3y3zizWNj0BdDmqYz3kXVWBJNq5UmBYajLw8MHpCJg9OkQOViIchhhz3RFUemGtKsr9fSi0RZa-V2WNBFnrFeiGbUK-akQPIdoegb8YDvE5_0pAf7rFh2o6PpgA388x7uP7ByY5O_cH9R0FqeECaclb7WGlzM098eIpI1J2b5K2bw5tGLZgYKF8Ql7XOYZhtj3BAJBuy7FkTU3u5wKzM22wcGf8fu2aUv5G8-BcV9C7ifUSTpQBZgQ8VnGMgKzT8eMaM8YA0dcq-DVfSMkYPeWTR0IexVK-vnrQmvfvy-lIP4kShQIT4rkycZ990HIVm0j1UrQg3EDh2-xVwab96uu7ISvXUuwKtKWXXNVKqpByMFQ51KsoeB55dqZqv9mDvf1Wv-z4BHMiH44snWyxLOKLbPmFiAHw0fdwRUhIjkHbXBmWF5MlW8NqZ7UjijW7wcTqYblsmNvNzi2sdgYQ2jcnieuEHpKmScPAEHbAbb3O2kB8B3PQjGZMLjKEF0k_g1ubvDxVbL9-Di2GWWAoVhJxNhmGXMK5AcHcW8S32guU1GQQt0OGu_1xGUOUujcSZCtAbNfgO99DrU_UrqKxYbM8mk-J4CQpSHleAltFspHNr9b4qnQJBnbmtnHT7cS3fXglHE-cKkgxjCeFaFLqhHoHdZUNPgtf9UmtE8Uc4trxlUedXWkBwebByJg9UEqHcEoEKNYZb3bJAnFOMYHIolWiwuF1jwNCqr3alkQhIIB_BX-Hxcgg_YuQht1r27g9cLVzTEy9Js_FDkDaIcuPmtTZB8YMrUyse8Md2Hy6A33I9wR7VA9M31YtStg9y26YzEx78O3J74NcrhgDgdxSEWJbqPgmkXW-ZYznTMRtOCH-FBsvOhHQPIpD0LH57lGJoVE1EZoHVkaPUPypH7wiOcldCyExIB4eSb98DHvIPErCsEzPUtg5egNYSNFOizmlbNc7boUVOHjYaqQkz_b0TbNemrZnnTX3Qno3rEC8pYV7QNN_tLIv08oipCZU2rNEPeoqLzYW-PZfvvOEq54Llgf3bjRvg3UkTRFWvJ8f_7KpZ8PTJcjPRTNYe3WF_81cV-D3HajIVMZzqGn4U6yaU0giapxhUK27vcEDQF-ukgF_rML3_vIf8PvZQ_K65tOFsMxHLFTMcjHzMraO0tNRiZkLku-vos8MHBBmlyFVunUGV)
+[ссылка на исходник диаграммы](https://www.plantuml.com/plantuml/uml/jLLTRn9157sVNp71nvRupeDfO_mmHcFKDsl85APqu-uiMGQIlhLObGILsFZiRw2qAwHK-XTc_f5dPhTCTmgqHYKXpCmzzypTSyzTDbgI9R8TXKG6CkIqf8vqNrsecPggNoh5Tw9IgiPgg4xnnLOFIeImjen5Ezhc2MaYFwW5JIOaBJtUlF_qmSiIPIswoshlU4Bl9BnUn3nyySe2TfejMenildvc8qn6nG0NjRZE4nkqwuN4TUvG-Re8gBLQDeXVBn174HFrQeU5GPt9EEFmJpqsQB3B1VPC1h6eTdWIxEGRcxuYNYGIh1Cqbf0iYNdb9u6ixgBKC7_wgmVBxYea-CT-sfFdMSy2uIdtA6zce-a5TiAzQYqMCed3oqkAHrxlag33i-vaIo_C92iKVFLW0RI5Rh46Tz3ye0YDOX7WF10D2tJR8coRIScJFOl9rmIVtE3bDyQ9Ryltviwiq6o0z3VTnSJCl05IAR78GYuiUNCU9O2vfEi6jGoftbUfITAVr92gCn2TMuPJtQSud-e1O03DrCY0WPYGQrJkcbL6hlXCGx82VJjEeyD8zr7zH1-ewVmbf3_eBxftmmsBLT7lmMIKwHbT5psixO0FNATGRgP-cZLgSYz6FT1T_Tbs0vdvkmRPHlWJKpR2-sZ0Hwm7MUOKf5qKduDD7fFHsjhjiaGiEOtnf2PfdLwIaAMvQCLKVpKEC0mueFe0q6C4IPb2prEZg-u2VeWT6eVrJEyZHF5xOFqt0g9lN7Y1CDYXHchkiJuoRGTgk9BET_I9cdb_9kiKgr66HkRONekOW_z0u4Xznz3KgT61G89SlklsGorROh4gMy99cWy6BZapO5STGEx9x4LkiClb2hKoZ6rER-vC0wQEt8stTHLwVDDWRubRyHg__VUn_yVptaWu5tyvySQK2FpndON_mOgHC_NU10umRzSYCIVmzg5rw7dc9ZibwfZYh8VTCQfAxwB0iPfQtLE2pmOSsux2tm00)
 
 **Негативный сценарий 2 - Подмена/Фальшивые входные данные:**
 

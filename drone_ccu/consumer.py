@@ -179,33 +179,45 @@ def handle_event(id, details_str):
                     print(f"[ATTENTION]")
                     print(f"{name} emergency stopped!")
             elif psswd == msg['psswd']:
-                if msg['command'] == 'register':
-                    details['operation'] = "register"
-                    details['deliver_to'] = "drone_communication_out"
-                    details['name'] = name
-                    details['coordinate'] = coordinate
-                    delivery_required = True
-                elif msg['command'] == 'set_task':
-                    if hash == len(msg["points"]):
-                        print(f'[DRONE_SET_TASK]')
-                        print(f'Point added!')
-                        task_points = msg["points"]
-                elif msg['command'] == 'start':
-                    clear_emergency_flag(details)
-                    watchdog_time = time.time()
-                    camera_event.clear()
-                    speed = msg['speed']
-                    start(details)
-                elif msg['command'] == 'stop':
-                    emergency(details)
-                    print("Stopped")
-                elif msg['command'] == 'sign_out':
-                    emergency(details)
-                    details['operation'] = "sign_out"
-                    details['name'] = name
-                    details['deliver_to'] = "drone_communication_out"
-                    status = 'Active'
-                    delivery_required = True
+                try:
+                    if details['operation_status'] == 'continue_command':
+                        pass
+                except Exception as e:
+                    details['operation_status'] == ''
+                if details['operation_status'] == 'continue_command':
+                    details['operation'] = details['operation_description']
+                    if msg['command'] == 'register':
+                        details['operation'] = "register"
+                        details['deliver_to'] = "drone_communication_out"
+                        details['name'] = name
+                        details['coordinate'] = coordinate
+                        delivery_required = True
+                    elif msg['command'] == 'set_task':
+                        if hash == len(msg["points"]):
+                            print(f'[DRONE_SET_TASK]')
+                            print(f'Point added!')
+                            task_points = msg["points"]
+                    elif msg['command'] == 'start':
+                        clear_emergency_flag(details)
+                        watchdog_time = time.time()
+                        camera_event.clear()
+                        speed = msg['speed']
+                        start(details)
+                    elif msg['command'] == 'stop':
+                        emergency(details)
+                        print("Stopped")
+                    elif msg['command'] == 'sign_out':
+                        emergency(details)
+                        details['operation'] = "sign_out"
+                        details['name'] = name
+                        details['deliver_to'] = "drone_communication_out"
+                        status = 'Active'
+                        delivery_required = True
+                else:
+                    details['operation_description'] = details['operation']
+                    details['operation'] = "check_command"
+                    details['deliver_to'] = "drone_com_val"
+                    proceed_to_deliver(id, details)
             else:
                 print(f"[warning] unknown command in ccu_in!\n{msg}")     
         elif details['operation'] == 'diagnostic_status':

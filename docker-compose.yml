@@ -1,3 +1,4 @@
+
 version: '3.4'
 
 services:
@@ -193,6 +194,54 @@ services:
       depends_on:
         - broker 
 
+  drone_crit:
+      image: drone_crit
+      build:
+        context: .
+        dockerfile: ./Dockerfile.drone_crit
+      volumes:
+        - ./storage/:/storage
+      ports:
+        - "6082:6082"
+      depends_on:
+        - broker 
+
+  drone_aut_ver:
+      image: drone_aut_ver
+      build:
+        context: .
+        dockerfile: ./Dockerfile.drone_aut_ver
+      volumes:
+        - ./storage/:/storage
+      ports:
+        - "6083:6083"
+      depends_on:
+        - broker 
+
+  drone_nav_ver:
+      image: drone_nav_ver
+      build:
+        context: .
+        dockerfile: ./Dockerfile.drone_nav_ver
+      volumes:
+        - ./storage/:/storage
+      ports:
+        - "6084:6084"
+      depends_on:
+        - broker 
+    
+  drone_com_val:
+      image: drone_com_val
+      build:
+        context: .
+        dockerfile: ./Dockerfile.drone_com_val
+      volumes:
+        - ./storage/:/storage
+      ports:
+        - "6085:6085"
+      depends_on:
+        - broker 
+
   drone_navigation_handler:
       image: drone_navigation_handler
       build:
@@ -203,6 +252,4 @@ services:
       ports:
         - "6086:6086"
       depends_on:
-        - broker       
-    
-  
+        - broker   

@@ -17,13 +17,13 @@ def handle_event(id, details_str):
     
     try:
         delivery_required = False
-        if details['operation'] == 'get_ins_coordinate':
-            details['deliver_to'] = 'drone_navigation_handler'
-            details['operation'] = 'ins_coordinate'
+        if details['operation'] == 'get_coordinate':
+            details['deliver_to'] = 'drone_com_val'
+            details['operation'] = 'coordinate'
             details['coordinate'] = True
             delivery_required = True
         else:
-            print(f"[warning] unknown operation in ins!\n{details}")                
+            print(f"[warning] unknown operation in gps!\n{details}")                
         if delivery_required:
             proceed_to_deliver(id, details)
     except Exception as e:
@@ -43,7 +43,7 @@ def consumer_job(args, config, requests_queue: multiprocessing.Queue):
             consumer.assign(partitions)
 
     # Subscribe to topic
-    topic = "drone_ins"
+    topic = "navigation_handler"
     consumer.subscribe([topic], on_assign=reset_offset)
 
     # Poll for new messages from Kafka and print them.

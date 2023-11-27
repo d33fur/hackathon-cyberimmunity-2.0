@@ -19,15 +19,27 @@ def handle_event(id, details_str):
     try:
         delivery_required = False
         if details['operation'] == 'battery_status':
-            status = random.choice([True, False])
-            details['operation'] = 'diagnostic_status'
-            details['deliver_to'] = 'drone_ccu'
-            details['systems_status'] = status
+            status = True
+            if details['battery_status'] < 20:
+                status = False
+            details['operation'] = 'diagnostic_battery_status'
+            details['deliver_to'] = 'drone_com_val'
+            details['battery_status'] = status
             delivery_required = True
-        elif details['operation'] == 'get_status':
-            details['operation'] = 'get_battery'
-            details['deliver_to'] = 'drone_battery_control'
-            delivery_required = True
+        elif details['operation'] == 'engines_status':
+            status = True
+            if details['engines_status'] < 70:
+                status = False
+            details['operation'] = 'diagnostic_engines_status'
+            details['deliver_to'] = 'drone_com_val'
+            details['engines_status'] = status
+            delivery_required = True 
+        elif details['operation'] == 'battery_status':
+            status = details['flight_controller_status']
+            details['operation'] = 'diagnostic_flight_controller_status'
+            details['deliver_to'] = 'drone_com_val'
+            details['flight_controller_status'] = status
+            delivery_required = True           
         else:
             print(f"[warning] unknown operation in diagnostic!\n{details}")                
         if delivery_required:

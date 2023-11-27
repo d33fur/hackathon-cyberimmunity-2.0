@@ -73,6 +73,12 @@ create-topics:
     --topic drone_ins \
     --bootstrap-server localhost:9092 \
     --replication-factor 1 \
+    --partitions 1 \
+    docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_navigation_handler \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
     --partitions 1
 	  docker exec broker \
   kafka-topics --create --if-not-exists \

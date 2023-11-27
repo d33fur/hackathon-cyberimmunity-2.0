@@ -9,6 +9,7 @@ from producer import proceed_to_deliver
 
 
 _requests_queue: multiprocessing.Queue = None
+engines_efficiency_level = 100
 
 
 def handle_event(id, details_str):
@@ -17,8 +18,12 @@ def handle_event(id, details_str):
     
     try:
         delivery_required = False
-        if details['operation'] == 'smth':
-            print(f"[INFO] I do smth usefull")     
+        if details['operation'] == 'get_engines':
+            details['operation'] = 'engines_status'
+            details['deliver_to'] = 'drone_diagnostic'
+            details['engines_status'] = engines_efficiency_level
+        elif details['operation'] == 'change_engines':
+            engines_efficiency_level += details['delta']        
         else:
             print(f"[warning] unknown operation in engines!\n{details}")                
         if delivery_required:

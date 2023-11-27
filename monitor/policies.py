@@ -16,6 +16,9 @@ def check_operation(id, details):
     if src == 'drone_ccu' and dst == 'drone_flight_controller' \
         and operation == 'clear':
         authorized = True
+    if src == 'drone_ccu' and dst == 'drone_flight_controller' \
+        and operation == 'move_to':
+        authorized = True
     if src == 'drone_ccu' and dst == 'drone_communication_out' \
         and operation == 'watchdog':
         authorized = True
@@ -28,9 +31,7 @@ def check_operation(id, details):
     if src == 'drone_ccu' and dst == 'drone_communication_out' \
         and operation == 'log':
         authorized = True
-    if src == 'drone_ccu' and dst == 'drone_flight_controller' \
-        and operation == 'move_to':
-        authorized = True
+
     if src == 'drone_ccu' and dst == 'drone_diagnostic' \
         and operation == 'get_status':
         authorized = True

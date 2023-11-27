@@ -1,0 +1,20 @@
+FROM python:3.8-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+
+ENV PYTHONUNBUFFERED=1
+
+COPY requirements.txt .
+RUN python -m pip install -r requirements.txt
+
+COPY drone_com_val /drone_com_val
+COPY config.ini /drone_com_val/
+
+#RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /scada
+#USER appuser
+
+WORKDIR /drone_com_val
+ENV FLASK_DEBUG=1
+CMD ["python", "drone_com_val.py", "config.ini"]
+
+EXPOSE 6085

@@ -74,8 +74,30 @@ create-topics:
     --bootstrap-server localhost:9092 \
     --replication-factor 1 \
     --partitions 1
-	  
-
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_crit \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_aut_ver \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_nav_ver \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
+	  docker exec broker \
+  kafka-topics --create --if-not-exists \
+    --topic drone_com_val \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1
 
 delay10s:
 	sleep 10

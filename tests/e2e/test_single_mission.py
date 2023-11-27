@@ -43,7 +43,8 @@ def initiate(name, coordinate, psswd):
         "command" : "initiate",
         "name" : name, #"ITEM1",
         "coordinate" : coordinate, #[2,2,2],
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     }
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -56,7 +57,8 @@ def register(name, psswd):
     data = {
         "command" : "register",
         "name" : name, #"ITEM1",
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     }
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -81,7 +83,8 @@ def start(name, speed, psswd):
         "command" : "start",
         "name" : name, # "ITEM1",
         "speed" : speed, #1,
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     }
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -94,7 +97,8 @@ def stop(name, psswd):
     data = {
         "command" : "stop",
         "name" : name, #"ITEM1",
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     }
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -107,7 +111,8 @@ def sign_out(name, psswd):
     data = {
         "command" : "sign_out",
         "name" : name, #"ITEM1",
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     }
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -122,7 +127,8 @@ def move_to(name, coordinate, speed, psswd):
         "name" : name, #"ITEM1",
         "coordinate" : coordinate, #[3,5,1],
         "speed" : speed, #1,
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     } 
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -136,7 +142,8 @@ def new_task(name, points, psswd):
         "command" : "new_task",
         "name" : name, #"ITEM1",
         "points" : points,#, [[5,5,5,0],[8,8,8,1],[11,11,11,1],[16,16,11,0]],
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     }
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -149,7 +156,8 @@ def clear_flag(name, psswd):
     data = {
         "command" : "clear_flag",
         "name" : name, #"ITEM1",
-        "psswd": psswd #12345
+        "psswd": psswd, #12345
+        'operation_status' : ''
     }
     response = requests.post(
         FPS_COMMAND_ENDPOINT_URI,
@@ -171,17 +179,17 @@ def test_single_full_functionality():
 
 
     initiate("ITEM1", [2,2,2], 12345)
-    sleep(2)
+    sleep(10)
     register("ITEM1", 12345)
-    sleep(2)
+    sleep(10)
     set_area([-1,-1,100,100])
-    sleep(1)
+    sleep(10)
     new_task("ITEM1", [[4,4,2,0],[3,7,2,1],[10,10,3,1]], 12345)
-    sleep(3)
+    sleep(30)
     start("ITEM1", 1, 12345)
     sleep(35)
     sign_out("ITEM1", 12345)
-    sleep(1)
+    sleep(10)
 
     # stop
     server.terminate()

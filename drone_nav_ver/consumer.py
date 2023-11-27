@@ -16,7 +16,7 @@ def handle_event(id, details_str):
     
     try:
         delivery_required = False
-        global battery_charge
+        print(f"[DRONE_NAVIGATION_VERIFICATION]")
         if details['operation'] == 'check_navigation':
             if details['coordinate'] == True:
                 details['operation'] = 'accept_coordinate'

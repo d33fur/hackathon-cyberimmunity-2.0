@@ -10,7 +10,6 @@ from producer import proceed_to_deliver
 
 _requests_queue: multiprocessing.Queue = None
 
-def get_gps_coordinate()
 
 
 def handle_event(id, details_str):

@@ -18,7 +18,7 @@ def handle_event(id, details_str):
         delivery_required = False
         print(f'[DRONE_TOKEN_VERIFICATION]', details['token'])
         if details['operation'] == 'check_authentication':
-            if details['token'] == 'very-secure-token':
+            if details['authorized'] == True:
                 details['operation'] = 'accept_command'
                 details['deliver_to'] = 'drone_com_val'
                 details['command_status'] = True

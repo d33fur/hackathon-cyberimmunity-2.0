@@ -16,9 +16,12 @@ def handle_event(id, details_str):
     
     try:
         delivery_required = False
+        print(f"[COMMAND_VALIDATOR]")
         if details['operation'] == 'check_command':
-            details['operation'] == 'get_coordinate'
-            details['deliver_to'] = 'navigation_handler'
+            details['operation'] = 'get_coordinate'
+            print(details['operation'])
+            details['deliver_to'] = 'drone_navigation_handler'
+            print(details['deliver_to'])
             details['coordinate'] = False
             proceed_to_deliver(id, details)
         elif details['operation'] == 'coordinate':

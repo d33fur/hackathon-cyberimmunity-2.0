@@ -179,13 +179,15 @@ def handle_event(id, details_str):
                     print(f"[ATTENTION]")
                     print(f"{name} emergency stopped!")
             elif psswd == msg['psswd']:
-                try:
-                    if details['operation_status'] == 'continue_command':
-                        pass
-                except Exception as e:
-                    details['operation_status'] == ''
+                # try:
+                #     if details['operation_status'] == 'continue_command':
+                #         pass
+                # except Exception as e:
+                #     details['operation_status'] == ''
+                print(f"ПРОВЕРКА КОМАНДЫ")
                 if details['operation_status'] == 'continue_command':
                     details['operation'] = details['operation_description']
+                    details['deliver_to'] = details['operation_deliver_to']
                     if msg['command'] == 'register':
                         details['operation'] = "register"
                         details['deliver_to'] = "drone_communication_out"
@@ -215,6 +217,7 @@ def handle_event(id, details_str):
                         delivery_required = True
                 else:
                     details['operation_description'] = details['operation']
+                    details['operation_deliver_to'] = details['deliver_to']
                     details['operation'] = "check_command"
                     details['deliver_to'] = "drone_com_val"
                     proceed_to_deliver(id, details)

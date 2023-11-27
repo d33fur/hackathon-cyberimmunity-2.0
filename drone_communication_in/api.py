@@ -41,7 +41,7 @@ def set_command():
         error_message = f"malformed request {request.data}"
         return error_message, 400
     return jsonify({"status": True})
-    
+
 def start_rest(requests_queue):
     global _requests_queue 
     _requests_queue = requests_queue

@@ -34,7 +34,7 @@ def handle_event(id, details_str):
             details['deliver_to'] = 'drone_com_val'
             details['engines_status'] = status
             delivery_required = True 
-        elif details['operation'] == 'battery_status':
+        elif details['operation'] == 'flight_controller_status':
             status = details['flight_controller_status']
             details['operation'] = 'diagnostic_flight_controller_status'
             details['deliver_to'] = 'drone_com_val'

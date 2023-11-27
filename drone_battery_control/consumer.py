@@ -25,6 +25,8 @@ def handle_event(id, details_str):
             delivery_required = True
         elif details['operation'] == 'change_battery':
             battery_charge += details['delta']
+        elif details['operation'] == 'off_drives':
+            battery_charge = 0
         else:
             print(f"[warning] unknown operation in battery_control!\n{details}")                
         if delivery_required:

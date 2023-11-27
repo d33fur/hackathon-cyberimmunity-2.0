@@ -17,6 +17,7 @@ def handle_event(id, details_str):
     
     try:
         delivery_required = False
+        print(f"[NAVIGATION_HANDLER]")
         if details['operation'] == 'get_coordinate':
             details['deliver_to'] = 'drone_com_val'
             details['operation'] = 'coordinate'

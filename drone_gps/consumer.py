@@ -10,6 +10,8 @@ from producer import proceed_to_deliver
 
 _requests_queue: multiprocessing.Queue = None
 
+def get_gps_coordinate()
+
 
 def handle_event(id, details_str):
     details = json.loads(details_str)
@@ -17,9 +19,10 @@ def handle_event(id, details_str):
     
     try:
         delivery_required = False
-        if details['operation'] == 'get_coordinate':
-            details['deliver_to'] = 'drone_ccu'
+        if details['operation'] == 'get_gps_coordinate':
+            details['deliver_to'] = 'drone_navigation_handler'
             details['operation'] = 'gps_coordinate'
+            details['coordinate'] = True
             delivery_required = True
         else:
             print(f"[warning] unknown operation in gps!\n{details}")                

@@ -113,17 +113,27 @@ def handle_event(id, details_str):
             time_offset = t%DELIVERY_INTERVAL_SEC
             
             threading.Thread(target=lambda:  move_to(details, x, y, z, direction, speed, time_offset)).start()
-            details['operation'] = 'smth'
+            details['operation'] = 'drone_engines'
             details['deliver_to'] = 'drone_engines'
+            status = 'move_to'
             delivery_required = True
         elif details['operation'] == 'stop':
             emergency_stop.set()
+            status = 'stop'
+            delivery_required = True
         elif details['operation'] == 'clear':
             emergency_stop.clear()
+            status = 'clear'
+            delivery_required = True
         else:
             print(f"[warning] unknown operation in flight_controller!\n{details}")                
         if delivery_required:
-            proceed_to_deliver(id, details)
+            if status is 'move_to':
+                proceed_to_deliver(id, details)
+            details['operation'] = 'drone_flight_controller'
+            details['deliver_to'] = 'drone_diagnostic'
+            details['flight_controller_status'] = status
+            proceed_to_deliver(id + 1, details)
     except Exception as e:
         print(f"[error] failed to handle request: {e}")
     

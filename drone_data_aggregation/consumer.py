@@ -7,6 +7,7 @@ import threading
 import time
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 import json
+from PIL import Image
 from producer import proceed_to_deliver
 
 
@@ -49,7 +50,7 @@ def telemetry(details):
         msg = {
             "id": details['id'],
             "operation": "data",
-            "deliver_to": "drone_ccu",
+            "deliver_to": "drone_com_val",
             "source": "drone_data_aggregation",
             "name": details['name'],
             "percent": percent
@@ -61,7 +62,7 @@ def telemetry(details):
 
         # details['deliver_to'] = 'drone_data_saver'
         # details['operation'] = 'smth'
-        # proceed_to_deliver(details['id'], details)
+        proceed_to_deliver(msg['id'], msg)
 
 
 def handle_event(id, details_str):

@@ -5,3 +5,4 @@ pytest
 requests
 kafka-python
 cryptography
+Pillow
